@@ -12,7 +12,7 @@ public class CharacterController : MonoBehaviour {
 	Animator animator;
 
 	private Rigidbody rb;
-	public float turnSmoothTime = 0.1f;
+	public float turnSmoothTime = 0.05f;
 
 	float turnSmoothVelocity;
 
@@ -22,45 +22,44 @@ public class CharacterController : MonoBehaviour {
 
 	public bool canJump = true;
 
-	private Vector3 distFromGroundJump = new Vector3(0f, -0.9f, 0f);
+	private Vector2 currentDir;
+
+	public float distFromGroundCanJump = 0.1f;
 
 	// Use this for initialization
 	void Start(){
 		animator = GetComponent<Animator> ();
 		rb = GetComponent<Rigidbody> ();
+		currentDir = new Vector2 (1f, 0f);
 	}
 
 	
 	// Update is called once per frame
 	void Update () {
-
+		
 		Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), 0f);
-		Vector2 inputDir = input.normalized;
-
-		if (inputDir != Vector2.zero) {
-			float targetRotation = Mathf.Atan2 (inputDir.x, 0f) * Mathf.Rad2Deg;
-			transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle (transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
+		if (input != Vector2.zero) {
+			currentDir = new Vector2 (input.x, 0f);
 		}
+		float targetRotation = Mathf.Atan2 (currentDir.x, 0f) * Mathf.Rad2Deg;
+		transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle (transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
 
 		bool running = Input.GetKey (KeyCode.LeftShift);
-		float targetSpeed = ((running) ? runSpeed : walkSpeed) * inputDir.magnitude;
+		float targetSpeed = ((running) ? runSpeed : walkSpeed) * input.magnitude;
 		currentSpeed = Mathf.SmoothDamp (currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime);
 
-		transform.Translate (inputDir * currentSpeed * Time.deltaTime, Space.World);
+		transform.Translate (input * currentSpeed * Time.deltaTime, Space.World);
 
-		float animationSpeedPercent = ((running)?1 : .5f) * inputDir.magnitude;
+		float animationSpeedPercent = ((running)?1 : .5f) * input.magnitude;
 		animator.SetFloat ("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 
 	}
 
 	void FixedUpdate(){
 
-		canJump = Physics2D.Linecast (transform.position, transform.position + distFromGroundJump);
-		Debug.Log(Physics2D.Linecast(transform.position, transform.position + distFromGroundJump));
-		Debug.Log (canJump);
-
-		Debug.DrawLine (transform.position, transform.position + distFromGroundJump, Color.red);
-
+		//Debug.Log (canJump);
+		//Debug.DrawRay (Physics.Raycast(transform.position, -Vector3.up, distFromGroundCanJump + 0.1f));
+		//Debug.Log (Physics.Raycast (transform.position + new Vector3 (0f, 1f, 0f), Vector3.down, (0.1f + distFromGroundCanJump)));
 		if (Input.GetKeyDown ("space") && canJump) {
 			canJump = false;
 			animator.SetTrigger ("Jump");
@@ -69,7 +68,6 @@ public class CharacterController : MonoBehaviour {
 			animator.ResetTrigger ("Jump");
 		}
 	}
-
 
 
 	public void setFalling(bool b){
