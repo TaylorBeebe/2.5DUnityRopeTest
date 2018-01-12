@@ -25,7 +25,7 @@ public class Hook : MonoBehaviour {
 		v3.z = 0;
 		this.transform.LookAt (v3);
 		if (Input.GetButtonDown ("Fire1")) {
-			if(Physics.Raycast(this.transform.position, this.transform.rotation * Vector3.forward, out hit)) {
+			if(Physics.Raycast(cubeTransformPosition(), this.transform.rotation * Vector3.forward, out hit)) {
 				hooked = true;
 				rb.isKinematic = true;
 			}				
@@ -45,6 +45,10 @@ public class Hook : MonoBehaviour {
 			momentum -= Time.deltaTime * 5;
 			step = 0;
 		}
+	}
+
+	Vector3 cubeTransformPosition(){
+		return new Vector3 (this.transform.position.x, this.transform.position.y, 0);
 	}
 
 			
