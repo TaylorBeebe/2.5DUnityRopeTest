@@ -8,6 +8,7 @@ public class DialogueManager : MonoBehaviour {
 
 	public Text nameText;
 	public Text dialogueText;
+	public Animator animator;
 
 	void Start () {
 		sentences = new Queue<string> ();
@@ -15,7 +16,9 @@ public class DialogueManager : MonoBehaviour {
 
 	public void StartDialogue (Dialogue d){
 
-		Debug.Log ("starting conversation");
+		//Debug.Log ("starting conversation");
+
+		animator.SetBool ("startDialog", true);
 
 		sentences.Clear ();
 		nameText.text = d.name;
@@ -35,6 +38,7 @@ public class DialogueManager : MonoBehaviour {
 	}
 
 	void EndDialogue(){
-		Debug.Log ("Ending dialogue");
+		animator.SetBool ("startDialog", false);
+		//Debug.Log ("Ending dialogue");
 	}
 }
