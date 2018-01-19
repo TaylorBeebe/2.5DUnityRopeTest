@@ -64,7 +64,7 @@ public class BaseCharacterController : MonoBehaviour {
 	void FixedUpdate(){
 		canJump = Physics.Raycast (transform.position + new Vector3 (0f, 0.1f, 0f), Vector3.down, (0.1f + distFromGroundCanJump));
 		//Debug.Log (canJump);
-		Debug.DrawRay (transform.position + new Vector3 (0f, 0.1f, 0f), Vector3.down, Color.red, (0.1f + distFromGroundCanJump));
+		//Debug.DrawRay (transform.position + new Vector3 (0f, 0.1f, 0f), Vector3.down, Color.red, (0.1f + distFromGroundCanJump));
 		//Debug.Log ());
 		if (Input.GetKeyDown ("space") && canJump) {
 			canJump = false;
