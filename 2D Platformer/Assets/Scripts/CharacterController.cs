@@ -44,14 +44,11 @@ public class CharacterController : MonoBehaviour {
 		float targetRotation = Mathf.Atan2 (currentDir.x, 0f) * Mathf.Rad2Deg;
 		transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle (transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
 
-		bool running = Input.GetKey (KeyCode.LeftShift);
-		float targetSpeed = ((running) ? runSpeed : walkSpeed) * input.magnitude;
-		currentSpeed = Mathf.SmoothDamp (currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime);
+		currentSpeed = Mathf.SmoothDamp (currentSpeed, runSpeed, ref speedSmoothVelocity, speedSmoothTime);
 
 		transform.Translate (input * currentSpeed * Time.deltaTime, Space.World);
 
-		float animationSpeedPercent = ((running)?1 : .5f) * input.magnitude;
-		animator.SetFloat ("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
+		animator.SetFloat ("speedPercent", input.magnitude, speedSmoothTime, Time.deltaTime);
 
 	}
 

@@ -132,7 +132,7 @@ MonoBehaviour:
   walkSpeed: 2
   jumpSpeed: 6
   turnSmoothTime: 0.05
-  speedSmoothTime: 0.1
+  speedSmoothTime: 0.2
   canJump: 1
   distFromGroundCanJump: 0.1
 --- !u!54 &13144949
@@ -537,6 +537,22 @@ Prefab:
     - target: {fileID: 9500000, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400036, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.25874004
+      objectReference: {fileID: 0}
+    - target: {fileID: 400036, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.6265371
+      objectReference: {fileID: 0}
+    - target: {fileID: 400036, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.72622365
+      objectReference: {fileID: 0}
+    - target: {fileID: 400036, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.11447384
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
