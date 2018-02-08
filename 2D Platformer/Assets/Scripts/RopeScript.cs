@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RopeScript : MonoBehaviour {
-	
+	public Rigidbody rigid;
+	public SphereCollider col;
+	public CharacterJoint ph; 
 	public Transform target;
 	public float resolution = 0.5F;
 	public float ropeDrag = 0.1F;
@@ -23,27 +25,28 @@ public class RopeScript : MonoBehaviour {
 	public float swing1Limit = 20.0F;
 
 	void FixedUpdate() {
-		if(rope) {
+		if (rope) {
 			for (int i = 0; i < segments; i++) {
 				if (i == 0) {
-					line.SetPosition(i, transform.position);
+					line.SetPosition (i, transform.position);
 				}
 				if (i == segments - 1) {
-					line.SetPosition(i, target.transform.position);
+					line.SetPosition (i, target.transform.position);
 				} else {
-					line.SetPosition(i, joints[i].transform.position);
+					line.SetPosition (i, joints [i].transform.position);
 				}
 			}
 			line.enabled = true;
 		} else {
 			line.enabled = false;
 		}
+	}
 
 	void BuildRope() {
 		line = gameObject.GetComponent<LineRenderer>();
 
-		segments = (int)Vector3.Distance(transform.position, target.position)*resolution);
-		line.SetVertexCount(segments);
+		segments = (int)(Vector3.Distance (transform.position, target.position) * resolution);
+		line.positionCount = segments;
 		joints = new GameObject[segments];
 		segmentPos[0] = transform.position;
 		segmentPos[segments - 1] = target.position;
@@ -62,9 +65,9 @@ public class RopeScript : MonoBehaviour {
 		}
 
 		// Attach the joints to the target object and parent it to this object
-		Character joint end = target.gameObject.AddComponent<CharacterJoint>();
+		CharacterJoint end = target.gameObject.AddComponent<CharacterJoint>();
 		end.connectedBody = joints[joints.Length-1].transform.rigidbody;
-		end swingAxis = swingAxis;
+		end.swingAxis = swingAxis;
 		SoftJointLimit limit_setter = end.lowTwistLimit;
 		limit_setter.limit = lowTwistLimit;
 		end.lowTwistLimit = limit_setter;
@@ -109,6 +112,7 @@ public class RopeScript : MonoBehaviour {
 		} else {
 			ph.connectedBody = joints[n-1].rigidbody;
 		}
+	}
 
 		void DestroyRope() {
 			//stop rendering rope; then destroy components
@@ -123,9 +127,9 @@ public class RopeScript : MonoBehaviour {
 	}
 	
 
-	}
+	
 
-
+	/*
 	public Vector3 destiny;
 	public float speed = 1;
 	public float distance = 2;
@@ -166,4 +170,6 @@ public class RopeScript : MonoBehaviour {
 		lastNode.GetComponent<HingeJoint> ().connectedBody = go.GetComponent<Rigidbody> ();
 		lastNode = go;
 	}
+
 }
+*/
