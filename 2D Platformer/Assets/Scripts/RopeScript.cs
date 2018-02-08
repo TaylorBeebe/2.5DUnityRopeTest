@@ -66,7 +66,8 @@ public class RopeScript : MonoBehaviour {
 
 		// Attach the joints to the target object and parent it to this object
 		CharacterJoint end = target.gameObject.AddComponent<CharacterJoint>();
-		end.connectedBody = joints[joints.Length-1].transform.rigidbody;
+		//end.connectedBody = joints[joints.Length-1].transform.rigidbody;
+		end.connectedBody = joints[joints.Length-1].transform.GetComponent<Rigidbody>();
 		end.swingAxis = swingAxis;
 		SoftJointLimit limit_setter = end.lowTwistLimit;
 		limit_setter.limit = lowTwistLimit;
@@ -108,9 +109,11 @@ public class RopeScript : MonoBehaviour {
 		col.radius = ropeColRadius;
 
 		if(n==1) {
-			ph.connectedBody = transform.rigidbody;
+			ph.connectedBody = transform.GetComponent<Rigidbody> ();
+			//ph.connectedBody = transform.rigidbody;
 		} else {
-			ph.connectedBody = joints[n-1].rigidbody;
+			ph.connectedBody = joints[n-1].GetComponent<Rigidbody> ();
+			//ph.connectedBody = joints[n-1].rigidbody;
 		}
 	}
 
