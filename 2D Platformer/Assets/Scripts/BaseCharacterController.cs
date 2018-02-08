@@ -40,6 +40,9 @@ public class BaseCharacterController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	void FixedUpdate(){
 		Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), 0f);
 		if (input != Vector2.zero) {
 			currentDir = new Vector2 (input.x, 0f);
@@ -59,9 +62,7 @@ public class BaseCharacterController : MonoBehaviour {
 		float animationSpeedPercent = ((running)?1 : .5f) * input.magnitude;
 		animator.SetFloat ("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 
-	}
 
-	void FixedUpdate(){
 		canJump = Physics.Raycast (transform.position + new Vector3 (0f, 0.1f, 0f), Vector3.down, (0.1f + distFromGroundCanJump));
 		//Debug.Log (canJump);
 		//Debug.DrawRay (transform.position + new Vector3 (0f, 0.1f, 0f), Vector3.down, Color.red, (0.1f + distFromGroundCanJump));

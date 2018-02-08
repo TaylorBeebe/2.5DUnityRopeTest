@@ -27,14 +27,11 @@ public class Hook : MonoBehaviour {
 
 				Debug.Log ("hooked");
 				hooked = true;
-				//Ray ray = 
-				//rb.isKinematic = true;
 			}				
 		}
 		if (Input.GetButtonUp ("Fire1")) {
 			if (hooked) {
 				hooked = false;
-				//rb.isKinematic = false;
 				rb.velocity = this.transform.rotation * Vector3.forward * momentum;
 			}
 		}
@@ -53,7 +50,7 @@ public class Hook : MonoBehaviour {
 			line.SetPosition (1, cubeTransformPosition());
 		}
 			
-		if (hooked && Input.GetKey(KeyCode.E)) {
+		if (hooked && Input.GetKey(KeyCode.W)) {
 			momentum += Time.deltaTime * speed;
 			//step = momentum * Time.deltaTime;
 			rb.AddForce (Vector3.Normalize(hit.point - cubeTransformPosition()) * 10000 * Time.deltaTime);
