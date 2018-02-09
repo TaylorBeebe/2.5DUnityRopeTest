@@ -15,7 +15,7 @@ public class RopeScript : MonoBehaviour {
 	private Vector3[] segmentPos;
 	private GameObject[] joints;
 	private LineRenderer line;
-	private int segments = 0;
+	private int segments = 10;
 	private bool rope = false;
 
 	//Joint Settings
@@ -24,13 +24,20 @@ public class RopeScript : MonoBehaviour {
 	public float highTwistLimit = 100.0F;
 	public float swing1Limit = 20.0F;
 
+	void Update() {
+		if (Input.GetButtonDown ("Fire1")) {
+			BuildRope ();
+		} else if (Input.GetButtonDown ("Fire1")) {
+			DestroyRope ();
+		}
+	}
+
 	void FixedUpdate() {
 		if (rope) {
 			for (int i = 0; i < segments; i++) {
 				if (i == 0) {
 					line.SetPosition (i, transform.position);
-				}
-				if (i == segments - 1) {
+				} else if (i == (segments - 1)) {
 					line.SetPosition (i, target.transform.position);
 				} else {
 					line.SetPosition (i, joints [i].transform.position);

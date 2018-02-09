@@ -15,7 +15,7 @@ public class Hook : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		line = GetComponent<LineRenderer> ();
+		//line = GetComponent<LineRenderer> ();
 	}
 	
 	// Update is called once per frame
@@ -37,8 +37,8 @@ public class Hook : MonoBehaviour {
 		}
 		if (hooked) {
 			this.transform.LookAt (hit.point);
-			line.SetPosition (0, cubeTransformPosition());
-			line.SetPosition (1, hit.point);
+			//line.SetPosition (0, cubeTransformPosition());
+			//line.SetPosition (1, hit.point);
 		} else {
 			// keep the distance locked, so that the player can swing like a pendulum
 			var v3 = Input.mousePosition;
@@ -46,8 +46,8 @@ public class Hook : MonoBehaviour {
 			v3 = Camera.main.ScreenToWorldPoint (v3);
 			v3.z = 0;
 			this.transform.LookAt (v3);
-			line.SetPosition (0, cubeTransformPosition());
-			line.SetPosition (1, cubeTransformPosition());
+			//line.SetPosition (0, cubeTransformPosition());
+			//line.SetPosition (1, cubeTransformPosition());
 		}
 			
 		if (hooked && Input.GetKey(KeyCode.W)) {

@@ -784,6 +784,7 @@ GameObject:
   - component: {fileID: 1038864887}
   - component: {fileID: 1038864891}
   - component: {fileID: 1038864890}
+  - component: {fileID: 1038864892}
   m_Layer: 2
   m_Name: Cube
   m_TagString: Untagged
@@ -960,6 +961,29 @@ MonoBehaviour:
   rb: {fileID: 13144949}
   hooked: 0
   speed: 5
+--- !u!114 &1038864892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1038864885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf8f220e737f3e94f95d128641a01e0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rigid: {fileID: 0}
+  col: {fileID: 0}
+  ph: {fileID: 0}
+  target: {fileID: 0}
+  resolution: 0.5
+  ropeDrag: 0.1
+  ropeMass: 0.1
+  ropeColRadius: 0.5
+  swingAxis: {x: 1, y: 0, z: 0}
+  lowTwistLimit: -100
+  highTwistLimit: 100
+  swing1Limit: 20
 --- !u!4 &1190407594 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400012, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
