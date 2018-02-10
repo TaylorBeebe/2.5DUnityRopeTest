@@ -25,6 +25,7 @@ public class RopeScript : MonoBehaviour {
 	public float swing1Limit = 20.0F;
 
 	void Update() {
+		//var targetRope: 
 		if (Input.GetButtonDown ("Fire1")) {
 			BuildRope ();
 		} else if (Input.GetButtonDown ("Fire1")) {
