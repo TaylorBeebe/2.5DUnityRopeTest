@@ -25,7 +25,7 @@ public class RopeScript : MonoBehaviour {
 	public float swing1Limit = 20.0F;
 
 	void Update() { 
-		target = GameObject.Find ("HookTarget");
+		target = GameObject.Find ("HookTarget").GetComponent<Transform>();
 		if (Input.GetButtonDown ("Fire1")) {
 			BuildRope ();
 		} else if (Input.GetButtonDown ("Fire1")) {
@@ -77,6 +77,7 @@ public class RopeScript : MonoBehaviour {
 		//end.connectedBody = joints[joints.Length-1].transform.rigidbody;
 		end.connectedBody = joints[joints.Length-1].transform.GetComponent<Rigidbody>();
 		end.swingAxis = swingAxis;
+
 		SoftJointLimit limit_setter = end.lowTwistLimit;
 		limit_setter.limit = lowTwistLimit;
 		end.lowTwistLimit = limit_setter;
@@ -95,9 +96,11 @@ public class RopeScript : MonoBehaviour {
 	void AddJointPhysics(int n) {
 		joints[n] = new GameObject("Joint_" + n);
 		joints[n].transform.parent = transform;
+
 		Rigidbody rigid = joints[n].AddComponent<Rigidbody>();
 		SphereCollider col = joints[n].AddComponent<SphereCollider>();
 		CharacterJoint ph = joints[n].AddComponent<CharacterJoint>();
+
 		ph.swingAxis = swingAxis;
 		SoftJointLimit limit_setter = ph.lowTwistLimit;
 		limit_setter.limit = lowTwistLimit;

@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 
+/*
+ * Hook will deal with the physics of the "grappling" 
+ * RopeScript will render the nodes & enact ropelike behavior
+ * 
+ */
+
 public class Hook : MonoBehaviour {
 	//public Transform parentTransform;
 	public RaycastHit hit;
 	public Rigidbody rb;
 	public Vector3 targetPoint;
 	public bool hooked = false;
+	public bool rope = false; // whether the rope is rendered or not
 	private float momentum;
 	public float speed;
 	//private float step;
@@ -52,7 +58,7 @@ public class Hook : MonoBehaviour {
 			//line.SetPosition (1, cubeTransformPosition());
 		}
 			
-		if (hooked && Input.GetKey(KeyCode.W)) {
+		if (hooked && Input.GetKey(KeyCode.W) && rope) {
 			momentum += Time.deltaTime * speed;
 			//step = momentum * Time.deltaTime;
 			rb.AddForce (Vector3.Normalize(hit.point - cubeTransformPosition()) * 10000 * Time.deltaTime);
