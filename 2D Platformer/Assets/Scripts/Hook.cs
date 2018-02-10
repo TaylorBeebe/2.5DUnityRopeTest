@@ -12,10 +12,15 @@ public class Hook : MonoBehaviour {
 	public float speed;
 	//private float step;
 	private LineRenderer line;
+	Animator animator;
+	private Transform ropeTarget;
+	public GameObject upperArm, lowerArm, hand;
 
-	// Use this for initialization
 	void Start () {
 		line = GetComponent<LineRenderer> ();
+		animator = GameObject.FindWithTag("Player").GetComponent<Animator> ();
+//		upperArm = GameObject.FindWithTag ("Player").GetComponent<Animator> ();
+		Debug.Log (animator);
 	}
 	
 	// Update is called once per frame
@@ -24,16 +29,17 @@ public class Hook : MonoBehaviour {
 			Debug.DrawRay (cubeTransformPosition (), this.transform.rotation * Vector3.forward * 10, Color.black, 2);
 
 			if(Physics.Raycast(cubeTransformPosition(), this.transform.rotation * Vector3.forward, out hit, 10, ~(1<<2))) {
-
-				Debug.Log ("hooked");
+//				ropeTarget = hit.point;
+//				Debug.Log ("hooked");
 				hooked = true;
-				//Ray ray = 
-				//rb.isKinematic = true;
+				animator.SetBool ("Hooked", true);
+
 			}				
 		}
 		if (Input.GetButtonUp ("Fire1")) {
 			if (hooked) {
 				hooked = false;
+				animator.SetBool ("Hooked", false);
 				//rb.isKinematic = false;
 				rb.velocity = this.transform.rotation * Vector3.forward * momentum;
 			}
@@ -68,9 +74,18 @@ public class Hook : MonoBehaviour {
 	Vector3 cubeTransformPosition(){
 		return new Vector3 (this.transform.position.x, this.transform.position.y, 0);
 	}
+		
+	void LateUpdate(){
+
+		if (animator.GetBool("Hooked")){
 			
-	void FixedUpdate() {
-		//if (!hooked) {
-		//}
+		}
+		
+	}
+
+	void setArmRotation(){
+
+
+		
 	}
 }
