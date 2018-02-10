@@ -4,9 +4,10 @@ using UnityEngine;
 
 // 
 public class Hook : MonoBehaviour {
-	public Transform parentTransform;
-	private RaycastHit hit;
+	//public Transform parentTransform;
+	public RaycastHit hit;
 	public Rigidbody rb;
+	public Vector3 targetPoint;
 	public bool hooked = false;
 	private float momentum;
 	public float speed;
@@ -36,7 +37,8 @@ public class Hook : MonoBehaviour {
 			}
 		}
 		if (hooked) {
-			this.transform.LookAt (hit.point);
+			targetPoint = hit.point;
+			this.transform.LookAt (targetPoint);
 			//line.SetPosition (0, cubeTransformPosition());
 			//line.SetPosition (1, hit.point);
 		} else {

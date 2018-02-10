@@ -24,8 +24,8 @@ public class RopeScript : MonoBehaviour {
 	public float highTwistLimit = 100.0F;
 	public float swing1Limit = 20.0F;
 
-	void Update() {
-		//var targetRope: 
+	void Update() { 
+		target = GameObject.Find ("HookTarget");
 		if (Input.GetButtonDown ("Fire1")) {
 			BuildRope ();
 		} else if (Input.GetButtonDown ("Fire1")) {
@@ -108,7 +108,6 @@ public class RopeScript : MonoBehaviour {
 		limit_setter = ph.swing1Limit;
 		limit_setter.limit = swing1Limit;
 		ph.swing1Limit = limit_setter;
-		//
 
 		joints[n].transform.position = segmentPos[n];
 

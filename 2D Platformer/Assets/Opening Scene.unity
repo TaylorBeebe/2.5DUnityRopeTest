@@ -403,6 +403,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 13144947}
+--- !u!1001 &428774759
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -11.013299
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -3.2583613
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.167589
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680129957171002, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1960276572206406, guid: ac9092577345ad942ba637c064e33330, type: 2}
+      propertyPath: m_Name
+      value: Cube
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: ac9092577345ad942ba637c064e33330, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &489078700
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,8 +1003,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ee9de1f42ca4184dbbd2e1ed7be0525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentTransform: {fileID: 13144951}
   rb: {fileID: 13144949}
+  targetPoint: {x: 0, y: 0, z: 0}
   hooked: 0
   speed: 5
 --- !u!114 &1038864892
