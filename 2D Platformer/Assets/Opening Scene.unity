@@ -177,6 +177,17 @@ MonoBehaviour:
   speedSmoothTime: 0.2
   canJump: 1
   distFromGroundCanJump: 0.1
+--- !u!114 &13144954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 13144947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce2af3a0115518b428a7210d2bf8de58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &40223085
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,6 +514,10 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 489078700}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &503151329 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100010, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
+  m_PrefabInternal: {fileID: 993170238}
 --- !u!1 &865189014
 GameObject:
   m_ObjectHideFlags: 0
@@ -980,6 +995,7 @@ MonoBehaviour:
   rb: {fileID: 13144949}
   hooked: 0
   speed: 5
+  swingHand: {fileID: 503151329}
 --- !u!1 &1219242400
 GameObject:
   m_ObjectHideFlags: 0

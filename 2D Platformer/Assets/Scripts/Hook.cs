@@ -13,13 +13,13 @@ public class Hook : MonoBehaviour {
 	//private float step;
 	private LineRenderer line;
 	Animator animator;
-	private Transform ropeTarget;
-	public GameObject upperArm, lowerArm, hand;
+	private Vector3 ropeTarget;
+	public GameObject swingHand;
 
 	void Start () {
 		line = GetComponent<LineRenderer> ();
 		animator = GameObject.FindWithTag("Player").GetComponent<Animator> ();
-//		upperArm = GameObject.FindWithTag ("Player").GetComponent<Animator> ();
+//		upperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
 		Debug.Log (animator);
 	}
 	
@@ -29,12 +29,12 @@ public class Hook : MonoBehaviour {
 			Debug.DrawRay (cubeTransformPosition (), this.transform.rotation * Vector3.forward * 10, Color.black, 2);
 
 			if(Physics.Raycast(cubeTransformPosition(), this.transform.rotation * Vector3.forward, out hit, 10, ~(1<<2))) {
-//				ropeTarget = hit.point;
+				ropeTarget = hit.point;
+				ropeTarget.z = 0;
 //				Debug.Log ("hooked");
 				hooked = true;
 				animator.SetBool ("Hooked", true);
-
-			}				
+			}
 		}
 		if (Input.GetButtonUp ("Fire1")) {
 			if (hooked) {
@@ -75,17 +75,34 @@ public class Hook : MonoBehaviour {
 		return new Vector3 (this.transform.position.x, this.transform.position.y, 0);
 	}
 		
-	void LateUpdate(){
-
-		if (animator.GetBool("Hooked")){
-			
-		}
-		
-	}
-
+//	void LateUpdate(){
+//
+//		if (animator.GetBool("Hooked")){
+//			setArmRotation ();
+//		}
+//
+//	}
+	 
 	void setArmRotation(){
 
+//		animator.SetLookAtWeight (1);
+//		animator.SetLookAtPosition (ropeTarget);
+//		//animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 1);
+//		animator.SetIKRotationWeight (AvatarIKGoal.LeftHand, 1);
+//		//animator.SetIKPosition (AvatarIKGoal.LeftHand, swingHand.transform.position);
+//		animator.SetIKRotation (AvatarIKGoal.LeftHand, swingHand.transform.rotation);
+	}
 
-		
+	void OnAnimatorIK(){
+		Debug.Log ("ON ANIM IK");
+		if (animator.GetBool ("Hooked")) {
+
+			animator.SetLookAtWeight (1);
+			animator.SetLookAtPosition (ropeTarget);
+			//animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 1);
+			animator.SetIKRotationWeight (AvatarIKGoal.LeftHand, 1);
+			//animator.SetIKPosition (AvatarIKGoal.LeftHand, swingHand.transform.position);
+			animator.SetIKRotation (AvatarIKGoal.LeftHand, swingHand.transform.rotation);
+		}
 	}
 }
