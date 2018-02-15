@@ -24,8 +24,13 @@ public class RopeScript : MonoBehaviour {
 	public float highTwistLimit = 100.0F;
 	public float swing1Limit = 20.0F;
 
-	void Update() { 
-		target = GameObject.Find ("HookTarget").GetComponent<Transform>();
+	void Start() {
+		line = gameObject.GetComponent<LineRenderer> ();
+		target = GameObject.Find ("HookTarget").GetComponent<Transform> ();
+	}
+	
+	void Update() {
+		//target = GameObject.Find ("HookTarget").GetComponent<Transform>();
 		if (Input.GetButtonDown ("Fire1")) {
 			BuildRope ();
 		} else if (Input.GetButtonDown ("Fire1")) {
@@ -51,8 +56,6 @@ public class RopeScript : MonoBehaviour {
 	}
 
 	void BuildRope() {
-		line = gameObject.GetComponent<LineRenderer>();
-
 		segments = (int)(Vector3.Distance (transform.position, target.position) * resolution);
 		line.positionCount = segments;
 		joints = new GameObject[segments];

@@ -30,6 +30,7 @@ public class Hook : MonoBehaviour {
 		if (Input.GetButtonDown ("Fire1")) {
 			Debug.DrawRay (cubeTransformPosition (), this.transform.rotation * Vector3.forward * 10, Color.black, 2);
 
+
 			if(Physics.Raycast(cubeTransformPosition(), this.transform.rotation * Vector3.forward, out hit, 10, ~(1<<2))) {
 
 				Debug.Log ("hooked");
