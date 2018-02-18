@@ -4,48 +4,50 @@ using UnityEngine;
 
 // 
 public class Hook : MonoBehaviour {
-	public Transform parentTransform;
+	//public Transform parentTransform;
 	private RaycastHit hit;
-	public Rigidbody rb;
+	private Rigidbody rb;
 	public bool hooked = false;
 	private float momentum;
 	public float speed;
-	//private float step;
 	private LineRenderer line;
 	Animator animator;
 	private Vector3 ropeTarget;
-	public GameObject swingHand;
+	public GameObject hookCube;
+	public GameObject ropeNode;
+	private float ropeNodeSize;
 
 	void Start () {
 		line = GetComponent<LineRenderer> ();
-		animator = GameObject.FindWithTag("Player").GetComponent<Animator> ();
-//		upperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-		Debug.Log (animator);
+		animator = this.GetComponent<Animator> ();
+		ropeNodeSize = ropeNode.GetComponent<Collider> ().bounds.size.x;
+		rb = this.GetComponent<Rigidbody> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetButtonDown ("Fire1")) {
-			Debug.DrawRay (cubeTransformPosition (), this.transform.rotation * Vector3.forward * 10, Color.black, 2);
+			Debug.DrawRay (cubeTransformPosition (), hookCube.transform.rotation * Vector3.forward * 10, Color.black, 2);
 
-			if(Physics.Raycast(cubeTransformPosition(), this.transform.rotation * Vector3.forward, out hit, 10, ~(1<<2))) {
+			if(Physics.Raycast(cubeTransformPosition(), hookCube.transform.rotation * Vector3.forward, out hit, 10, ~(1<<2))) {
 				ropeTarget = hit.point;
 				ropeTarget.z = 0;
+				GameObject ropeTargetObject = (GameObject)Instantiate (ropeNode, hit.point, new Quaternion (0f, 0f, 0f, 0f));
 //				Debug.Log ("hooked");
 				hooked = true;
 				animator.SetBool ("Hooked", true);
+				//generateRope (hookCube, ropeTargetObject);
 			}
 		}
 		if (Input.GetButtonUp ("Fire1")) {
 			if (hooked) {
 				hooked = false;
 				animator.SetBool ("Hooked", false);
-				//rb.isKinematic = false;
-				rb.velocity = this.transform.rotation * Vector3.forward * momentum;
+				rb.velocity = hookCube.transform.rotation * Vector3.forward * momentum;
 			}
 		}
 		if (hooked) {
-			this.transform.LookAt (hit.point);
+			hookCube.transform.LookAt (hit.point);
 			line.SetPosition (0, cubeTransformPosition());
 			line.SetPosition (1, hit.point);
 		} else {
@@ -54,7 +56,7 @@ public class Hook : MonoBehaviour {
 			v3.z = 0;
 			v3 = Camera.main.ScreenToWorldPoint (v3);
 			v3.z = 0;
-			this.transform.LookAt (v3);
+			hookCube.transform.LookAt (v3);
 			line.SetPosition (0, cubeTransformPosition());
 			line.SetPosition (1, cubeTransformPosition());
 		}
@@ -67,42 +69,35 @@ public class Hook : MonoBehaviour {
 		}
 		else if (momentum >= 0) {
 			momentum = 0;
-			//ep = 0;
 		}
 	}
 
 	Vector3 cubeTransformPosition(){
-		return new Vector3 (this.transform.position.x, this.transform.position.y, 0);
-	}
-		
-//	void LateUpdate(){
-//
-//		if (animator.GetBool("Hooked")){
-//			setArmRotation ();
-//		}
-//
-//	}
-	 
-	void setArmRotation(){
-
-//		animator.SetLookAtWeight (1);
-//		animator.SetLookAtPosition (ropeTarget);
-//		//animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 1);
-//		animator.SetIKRotationWeight (AvatarIKGoal.LeftHand, 1);
-//		//animator.SetIKPosition (AvatarIKGoal.LeftHand, swingHand.transform.position);
-//		animator.SetIKRotation (AvatarIKGoal.LeftHand, swingHand.transform.rotation);
+		return new Vector3 (hookCube.transform.position.x, hookCube.transform.position.y, 0);
 	}
 
 	void OnAnimatorIK(){
-		Debug.Log ("ON ANIM IK");
 		if (animator.GetBool ("Hooked")) {
-
-			animator.SetLookAtWeight (1);
-			animator.SetLookAtPosition (ropeTarget);
-			//animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 1);
-			animator.SetIKRotationWeight (AvatarIKGoal.LeftHand, 1);
-			//animator.SetIKPosition (AvatarIKGoal.LeftHand, swingHand.transform.position);
-			animator.SetIKRotation (AvatarIKGoal.LeftHand, swingHand.transform.rotation);
+			if (ropeTarget != null) {
+				animator.SetLookAtWeight (0.4f);
+				animator.SetLookAtPosition (ropeTarget);
+				animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 0.8f);
+				animator.SetIKPosition (AvatarIKGoal.LeftHand, ropeTarget);
+			}
 		}
+	}
+
+	void generateRope(GameObject origin, GameObject target){
+		Debug.Log ("Generating Rope");
+		if (Vector3.Distance (origin.transform.position, target.transform.position) > ropeNodeSize) {
+			origin.transform.LookAt (target.transform);
+			GameObject nextNode = (GameObject)Instantiate (ropeNode, origin.transform.forward * ropeNodeSize, new Quaternion (0f, 0f, 0f, 0f));
+			nextNode.GetComponent<HingeJoint>().connectedBody = origin.GetComponent<Rigidbody>();
+			generateRope (nextNode, target);
+		}
+		else{
+			origin.GetComponent<HingeJoint>().connectedBody = target.GetComponent<Rigidbody>();
+		}
+
 	}
 }
