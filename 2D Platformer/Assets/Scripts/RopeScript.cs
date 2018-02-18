@@ -18,6 +18,7 @@ public class RopeScript : MonoBehaviour {
 	private int segments = 10;
 	private bool rope = false;
 
+
 	//Joint Settings
 	public Vector3 swingAxis = new Vector3(1,0,0);
 	public float lowTwistLimit = -100.0F;

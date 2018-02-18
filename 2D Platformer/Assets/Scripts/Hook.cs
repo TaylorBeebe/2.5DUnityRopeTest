@@ -18,7 +18,7 @@ public class Hook : MonoBehaviour {
 	private float momentum;
 	public float speed;
 	//private float step;
-	private LineRenderer line;
+	//private LineRenderer line;
 
 	// Use this for initialization
 	void Start () {
@@ -29,7 +29,6 @@ public class Hook : MonoBehaviour {
 	void Update () {
 		if (Input.GetButtonDown ("Fire1")) {
 			Debug.DrawRay (cubeTransformPosition (), this.transform.rotation * Vector3.forward * 10, Color.black, 2);
-
 
 			if(Physics.Raycast(cubeTransformPosition(), this.transform.rotation * Vector3.forward, out hit, 10, ~(1<<2))) {
 

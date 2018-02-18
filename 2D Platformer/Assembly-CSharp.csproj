@@ -55,6 +55,7 @@
      <Compile Include="Assets\Scripts\BaseCharacterController.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\Hook.cs" />
+     <Compile Include="Assets\Scripts\HookTarget.cs" />
      <Compile Include="Assets\Scripts\RopeScript.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
