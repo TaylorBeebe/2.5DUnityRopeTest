@@ -131,7 +131,7 @@ MonoBehaviour:
   hooked: 0
   speed: 5
   hookCube: {fileID: 1038864885}
-  ropeNode: {fileID: 1879235716928546, guid: 3fe33dce00b14a548af66d026365bd05, type: 2}
+  hook2D: {fileID: 1409519036530522, guid: c29d29825b1940a439a02b881700fe4e, type: 2}
 --- !u!54 &13144949
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 3, z: 0}
+  - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 2
     widthMultiplier: 0.1
@@ -892,7 +892,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1038864886}
   - component: {fileID: 1038864889}
-  - component: {fileID: 1038864888}
   - component: {fileID: 1038864887}
   m_Layer: 2
   m_Name: Cube
@@ -948,18 +947,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &1038864888
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1038864885}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &1038864889
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1061,21 +1048,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1578447769 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100034, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
-  m_PrefabInternal: {fileID: 993170238}
---- !u!114 &1578447771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1578447769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c9a480cf84303f44bd79280d22594be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1761083268 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400010, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}

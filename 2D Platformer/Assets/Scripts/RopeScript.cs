@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RopeScript : MonoBehaviour {
-
+	/*
 	public Vector3 destiny;
 	public float speed = 1;
 	public float distance = 2;
@@ -43,5 +43,38 @@ public class RopeScript : MonoBehaviour {
 
 		lastNode.GetComponent<HingeJoint> ().connectedBody = go.GetComponent<Rigidbody> ();
 		lastNode = go;
+	}
+	*/
+
+	public Vector2 ropeTarget;
+
+	public float speed = 2;
+
+	public float distance = 1;
+
+	public GameObject ropeNode2D;
+
+	public GameObject ropeNode3D;
+
+	public List<GameObject> nodes = new List<GameObject>();
+
+	public LineRenderer line;
+
+	public GameObject hookOrigin;
+
+	void Start(){
+
+		line = this.GetComponent<LineRenderer> ();
+
+	}
+
+	void Update(){
+
+		transform.position = Vector2.MoveTowards (transform.position, ropeTarget, speed);
+
+		//if (Vector2.Distance(hookOrigin.transform.position
+
+
+	
 	}
 }

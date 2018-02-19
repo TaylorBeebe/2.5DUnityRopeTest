@@ -4,24 +4,40 @@ using UnityEngine;
 
 // 
 public class Hook : MonoBehaviour {
-	//public Transform parentTransform;
+
 	private RaycastHit hit;
+
 	private Rigidbody rb;
+
 	public bool hooked = false;
+
 	private float momentum;
+
 	public float speed;
+
 	private LineRenderer line;
+
 	Animator animator;
+
 	private Vector3 ropeTarget;
+
 	public GameObject hookCube;
-	public GameObject ropeNode;
-	private float ropeNodeSize;
+
+	private GameObject hook;
+
+	//public GameObject ropeNode;
+
+	public GameObject hook2D;
+
+	//private float ropeNodeSize;
 
 	void Start () {
 		line = GetComponent<LineRenderer> ();
 		animator = this.GetComponent<Animator> ();
-		ropeNodeSize = ropeNode.GetComponent<Collider> ().bounds.size.x;
+		//Debug.Log(ropeNode.GetComponent<Collider>());
+		//ropeNodeSize = ropeNode.GetComponent<SphereCollider> ().radius;
 		rb = this.GetComponent<Rigidbody> ();
+		//Debug.Log ("Rope Node Size : " + ropeNodeSize);
 	}
 	
 	// Update is called once per frame
@@ -31,12 +47,12 @@ public class Hook : MonoBehaviour {
 
 			if(Physics.Raycast(cubeTransformPosition(), hookCube.transform.rotation * Vector3.forward, out hit, 10, ~(1<<2))) {
 				ropeTarget = hit.point;
-				ropeTarget.z = 0;
-				GameObject ropeTargetObject = (GameObject)Instantiate (ropeNode, hit.point, new Quaternion (0f, 0f, 0f, 0f));
-//				Debug.Log ("hooked");
+				ropeTarget.z = 0f;
+				//GameObject ropeTargetObject = (GameObject)Instantiate (ropeNode, hit.point, Quaternion.identity);
 				hooked = true;
 				animator.SetBool ("Hooked", true);
-				//generateRope (hookCube, ropeTargetObject);
+				hook = (GameObject) Instantiate (hook2D, cubeTransformPosition (), Quaternion.identity);
+				hook.GetComponent<RopeScript> ().ropeTarget = ropeTarget;
 			}
 		}
 		if (Input.GetButtonUp ("Fire1")) {
@@ -84,20 +100,27 @@ public class Hook : MonoBehaviour {
 				animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 0.8f);
 				animator.SetIKPosition (AvatarIKGoal.LeftHand, ropeTarget);
 			}
+
+
 		}
 	}
-
-	void generateRope(GameObject origin, GameObject target){
+	/*
+	void generateRope(GameObject origin, GameObject target, int rec){
 		Debug.Log ("Generating Rope");
+		Debug.Log (rec);
 		if (Vector3.Distance (origin.transform.position, target.transform.position) > ropeNodeSize) {
 			origin.transform.LookAt (target.transform);
 			GameObject nextNode = (GameObject)Instantiate (ropeNode, origin.transform.forward * ropeNodeSize, new Quaternion (0f, 0f, 0f, 0f));
-			nextNode.GetComponent<HingeJoint>().connectedBody = origin.GetComponent<Rigidbody>();
-			generateRope (nextNode, target);
+			nextNode.GetComponent<HingeJoint> ().connectedBody = origin.GetComponent<Rigidbody> ();
+			rec++;
+			generateRope (nextNode, target, rec);
+		} else if (rec >= 50) {
+			
 		}
 		else{
 			origin.GetComponent<HingeJoint>().connectedBody = target.GetComponent<Rigidbody>();
 		}
-
+	
 	}
+	*/
 }
