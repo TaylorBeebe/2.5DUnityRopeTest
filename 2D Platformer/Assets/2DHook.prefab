@@ -80,7 +80,7 @@ MonoBehaviour:
   distance: 2
   ropeNode2D: {fileID: 1724289116891706, guid: 6416bf625e5af2148b2e05807b530d1e, type: 2}
   ropeNode3D: {fileID: 1996132958530064, guid: 0535e810ec20f5f40a7b8d493e144220, type: 2}
-  nodes: []
+  hookNode3D: {fileID: 1876003219928328, guid: ebf7160d151dd3644bad60aa9da21452, type: 2}
   line: {fileID: 0}
   hookOrigin: {fileID: 0}
 --- !u!120 &120172287244050910
@@ -223,7 +223,7 @@ HingeJoint2D:
   m_GameObject: {fileID: 1409519036530522}
   m_Enabled: 1
   serializedVersion: 4
-  m_EnableCollision: 0
+  m_EnableCollision: 1
   m_ConnectedRigidBody: {fileID: 0}
   m_BreakForce: Infinity
   m_BreakTorque: Infinity

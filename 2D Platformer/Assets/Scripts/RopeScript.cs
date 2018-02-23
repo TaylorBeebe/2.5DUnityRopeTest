@@ -56,25 +56,56 @@ public class RopeScript : MonoBehaviour {
 
 	public GameObject ropeNode3D;
 
-	public List<GameObject> nodes = new List<GameObject>();
+	public GameObject hookNode3D;
+
+	private List<GameObject> nodes = new List<GameObject>();
+
+	private List<GameObject> nodes3D = new List<GameObject> ();
+
+	private Vector3[] linePoints = new Vector3[100];
 
 	public LineRenderer line;
 
 	public GameObject hookOrigin;
 
+	private GameObject lastNode;
+
+	private GameObject player;
+
+	private GameObject newNode;
+
 	void Start(){
 
 		line = this.GetComponent<LineRenderer> ();
-
+		lastNode = this.gameObject;
+		Instantiate (hookNode3D, this.transform);
+		player = GameObject.FindGameObjectWithTag ("Player");
 	}
 
 	void Update(){
 
 		transform.position = Vector2.MoveTowards (transform.position, ropeTarget, speed);
 
-		//if (Vector2.Distance(hookOrigin.transform.position
+		if (Vector2.Distance(lastNode.transform.position, hookOrigin.transform.position) >= distance){
+			newNode = (GameObject) Instantiate(ropeNode2D, 
+				new Vector3(hookOrigin.transform.position.x, hookOrigin.transform.position.y, 0f),
+				Quaternion.identity
+			);
+			lastNode.GetComponent<HingeJoint2D> ().connectedBody = newNode.GetComponent<Rigidbody2D>();
+			newNode.GetComponent<HingeJoint2D> ().connectedBody = hookOrigin.GetComponent<Rigidbody2D> ();
+		}
 
 
 	
+	}
+
+	void LateUpdate(){
+
+		hookNode3D.transform.position = this.gameObject.transform.position;
+		
+		for (int x = 0; x < nodes.Count; x++) {
+			nodes3D[x].transform.position = nodes[x].transform.position;
+		}
+		
 	}
 }

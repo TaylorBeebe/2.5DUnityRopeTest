@@ -893,6 +893,7 @@ GameObject:
   - component: {fileID: 1038864886}
   - component: {fileID: 1038864889}
   - component: {fileID: 1038864887}
+  - component: {fileID: 1038864888}
   m_Layer: 2
   m_Name: Cube
   m_TagString: Untagged
@@ -947,6 +948,26 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!50 &1038864888
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1038864885}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!33 &1038864889
 MeshFilter:
   m_ObjectHideFlags: 0
