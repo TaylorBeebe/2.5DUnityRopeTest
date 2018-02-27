@@ -7,25 +7,21 @@ public class RopeScript : MonoBehaviour {
 
 	public Vector2 ropeTarget;
 
-	public float speed = 2;
+	public float retractSpeed = 2;
 
 	public float distance = 1;
 
 	public float maxDistance = 50;
 
+	public float minDistance = 0.3f;
+
+	public bool pullRopeIn = false;
+
 	public bool hookInterference = false;
 
-	public GameObject ropeNode2D;
-
-	public GameObject ropeNode3D;
-
-	public GameObject hookNode3D;
+	public GameObject ropeNode;
 
 	private List<GameObject> nodes = new List<GameObject> ();
-
-	private List<GameObject> nodes3D = new List<GameObject> ();
-
-	private Vector3[] linePoints = new Vector3[100];
 
 	public LineRenderer line;
 
@@ -37,24 +33,31 @@ public class RopeScript : MonoBehaviour {
 
 	private GameObject newNode;
 
+	private Vector3 nodeSpawn;
+
+
+
 	void Start(){
 
 		line = this.GetComponent<LineRenderer> ();
 		lastNode = this.gameObject;
-		Instantiate (hookNode3D, this.transform);
+		nodes.Add (this.gameObject);
 		player = GameObject.FindGameObjectWithTag ("Player");
+
 	}
 
 	void Update(){
 
-		//transform.position = Vector2.MoveTowards (transform.position, ropeTarget, speed);
+		nodeSpawn = hookOrigin.transform.rotation * Vector3.forward * .02f;
 
-		if (Vector2.Distance (this.transform.position, hookOrigin.transform.position) <= maxDistance || hookInterference) {
+		if ((Vector2.Distance (this.transform.position, hookOrigin.transform.position) 
+			<= maxDistance && !hookInterference) 
+			&& !pullRopeIn) {
 
 			extendRope ();
 		
 		} else {
-
+			
 			retractRope ();
 		
 		}	
@@ -62,32 +65,28 @@ public class RopeScript : MonoBehaviour {
 
 	void LateUpdate(){
 
-		hookNode3D.transform.position = this.gameObject.transform.position;
-		
-		for (int x = 0; x < nodes.Count; x++) {
-			nodes3D[x].transform.position = nodes[x].transform.position;
-		}
+//		for (int x = 0; x < nodes.Count; x++) {
+//			nodes3D[x].transform.position = nodes[x].transform.position;
+//		}
 		
 	}
-
 	void extendRope(){
 		
 		if (Vector2.Distance(lastNode.transform.position, hookOrigin.transform.position) >= distance){
-			newNode = (GameObject) Instantiate(ropeNode2D, 
-				new Vector3(hookOrigin.transform.position.x, hookOrigin.transform.position.y, 0f),
+			newNode = (GameObject) Instantiate(ropeNode,
+				nodeSpawn,
 				Quaternion.identity
 			);
-			lastNode.GetComponent<HingeJoint2D> ().connectedBody = newNode.GetComponent<Rigidbody2D>();
-			newNode.GetComponent<HingeJoint2D> ().connectedBody = hookOrigin.GetComponent<Rigidbody2D> ();
+			lastNode.GetComponent<ConfigurableJoint> ().connectedBody = newNode.GetComponent<Rigidbody>();
+			newNode.GetComponent<ConfigurableJoint> ().connectedBody = hookOrigin.GetComponent<Rigidbody>();
+			lastNode = newNode;
 		}
 	
 	}
 
 	void retractRope(){
 
-		if (Vector2.Distance (lastNode.transform.position, hookOrigin.transform.position) >= distance) {
-
-
+		if (Vector2.Distance(lastNode.transform.position, hookOrigin.transform.position) <= minDistance) {
 
 		}
 
