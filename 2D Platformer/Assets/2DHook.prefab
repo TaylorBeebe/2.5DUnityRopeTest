@@ -57,7 +57,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -78,6 +78,8 @@ MonoBehaviour:
   ropeTarget: {x: 0, y: 0}
   speed: 1
   distance: 2
+  maxDistance: 50
+  hookInterference: 0
   ropeNode2D: {fileID: 1724289116891706, guid: 6416bf625e5af2148b2e05807b530d1e, type: 2}
   ropeNode3D: {fileID: 1996132958530064, guid: 0535e810ec20f5f40a7b8d493e144220, type: 2}
   hookNode3D: {fileID: 1876003219928328, guid: ebf7160d151dd3644bad60aa9da21452, type: 2}
