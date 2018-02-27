@@ -125,13 +125,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 13144947}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ee9de1f42ca4184dbbd2e1ed7be0525, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ee5ed2439550844990d32691c124640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hooked: 0
-  speed: 5
-  hookCube: {fileID: 1038864885}
-  hook2D: {fileID: 1409519036530522, guid: c29d29825b1940a439a02b881700fe4e, type: 2}
+  shootSpeed: 2
+  extending: 0
+  hookOrigin: {fileID: 1038864885}
+  hook: {fileID: 1876003219928328, guid: ebf7160d151dd3644bad60aa9da21452, type: 2}
 --- !u!54 &13144949
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -805,10 +805,9 @@ GameObject:
   - component: {fileID: 1038864886}
   - component: {fileID: 1038864889}
   - component: {fileID: 1038864887}
-  - component: {fileID: 1038864888}
   m_Layer: 2
-  m_Name: Cube
-  m_TagString: Untagged
+  m_Name: hookOrigin
+  m_TagString: HookOrigin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -860,26 +859,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!50 &1038864888
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1038864885}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!33 &1038864889
 MeshFilter:
   m_ObjectHideFlags: 0

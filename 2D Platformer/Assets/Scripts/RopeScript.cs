@@ -4,55 +4,63 @@ using UnityEngine;
 
 public class RopeScript : MonoBehaviour {
 
-
-	public Vector2 ropeTarget;
-
+	//Speed the hook retracts
 	public float retractSpeed = 2;
 
-	public float distance = 1;
-
+	//furthest the rope can go
 	public float maxDistance = 50;
 
+	//distance constant that sets how far away the last node is before
+	//a new node is created
 	public float minDistance = 0.3f;
 
+	//set to true when the player has set the rope to retract or
+	//the rope has hit interference
 	public bool pullRopeIn = false;
 
-	public bool hookInterference = false;
-
+	//prefab to instantiate new nodes in the rope
 	public GameObject ropeNode;
 
-	private List<GameObject> nodes = new List<GameObject> ();
+	//stores a list of all nodes currently in the rope
+	//private List<GameObject> nodes = new List<GameObject> ();
+	private Stack<GameObject> nodes = new Stack<GameObject>();
 
-	public LineRenderer line;
+	//renders line between each rope node
+	private LineRenderer line;
 
-	public GameObject hookOrigin;
+	//origin of the hook on players arm
+	private GameObject hookOrigin;
 
+	//last node created. initially set to be the hook
 	private GameObject lastNode;
 
+	//player gameobject
 	private GameObject player;
 
+	//used when instantiating a new node
 	private GameObject newNode;
 
+	//spawn location of new nodes. set to be slightly in front of hookOrigin
 	private Vector3 nodeSpawn;
 
 
 
 	void Start(){
-
 		line = this.GetComponent<LineRenderer> ();
 		lastNode = this.gameObject;
-		nodes.Add (this.gameObject);
+		nodes.Push (this.gameObject);
 		player = GameObject.FindGameObjectWithTag ("Player");
-
+		this.gameObject.GetComponent<Rigidbody> ().useGravity = false;
+		hookOrigin = GameObject.FindGameObjectWithTag ("HookOrigin");
+		Debug.Log (hookOrigin);
 	}
 
 	void Update(){
 
 		nodeSpawn = hookOrigin.transform.rotation * Vector3.forward * .02f;
 
-		if ((Vector2.Distance (this.transform.position, hookOrigin.transform.position) 
-			<= maxDistance && !hookInterference) 
-			&& !pullRopeIn) {
+		if (Vector2.Distance (this.transform.position, hookOrigin.transform.position) 
+			<= maxDistance && !pullRopeIn) {
 
 			extendRope ();
 		
@@ -72,66 +80,41 @@ public class RopeScript : MonoBehaviour {
 	}
 	void extendRope(){
 		
-		if (Vector2.Distance(lastNode.transform.position, hookOrigin.transform.position) >= distance){
-			newNode = (GameObject) Instantiate(ropeNode,
+		if (Vector2.Distance (lastNode.transform.position, nodeSpawn) >= minDistance) {
+			newNode = (GameObject)Instantiate (ropeNode,
 				nodeSpawn,
 				Quaternion.identity
 			);
-			lastNode.GetComponent<ConfigurableJoint> ().connectedBody = newNode.GetComponent<Rigidbody>();
-			newNode.GetComponent<ConfigurableJoint> ().connectedBody = hookOrigin.GetComponent<Rigidbody>();
+			lastNode.GetComponent<ConfigurableJoint> ().connectedBody = newNode.GetComponent<Rigidbody> ();
+			newNode.GetComponent<ConfigurableJoint> ().connectedBody = hookOrigin.GetComponent<Rigidbody> ();
 			lastNode = newNode;
+		} else {
+			player.GetComponent<HookScript> ().extending = false;
+			pullRopeIn = true;
+			this.gameObject.GetComponent<Rigidbody> ().useGravity = true;
 		}
 	
 	}
 
 	void retractRope(){
+		
+		if (Vector2.Distance (lastNode.transform.position, hookOrigin.transform.position) <= minDistance) {
+			if (lastNode == this.gameObject) {
+				player.GetComponent<HookScript> ().extending = false;
+			}
 
-		if (Vector2.Distance(lastNode.transform.position, hookOrigin.transform.position) <= minDistance) {
-
+			Destroy (nodes.Pop ());
+			lastNode = nodes.Peek ();
+			Debug.Log ("Node has been destroyed. Last node is: " + lastNode);
+			lastNode.GetComponent<ConfigurableJoint> ().connectedBody = hookOrigin.GetComponent<Rigidbody>();
 		}
+		lastNode.GetComponent<Rigidbody> ().AddForce (hookOrigin.transform.position
+		- lastNode.transform.position * retractSpeed);
+	}
 
+	void OnCollisionEnter(Collision col){
+
+		this.gameObject.GetComponent<Rigidbody> ().isKinematic = true;
+		
 	}
 }
-
-/*
-	public Vector3 destiny;
-	public float speed = 1;
-	public float distance = 2;
-	public GameObject nodePrefab;
-	public GameObject player;
-	public GameObject lastNode;
-	private bool done = false;
-
-	// Use this for initialization
-	void Start () {
-		player = GameObject.FindGameObjectWithTag ("Player");
-		lastNode = transform.gameObject;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		transform.position = Vector3.MoveTowards (transform.position, destiny, speed);
-
-		if ((Vector3)transform.position != destiny) {
-			if (Vector3.Distance (player.transform.position, lastNode.transform.position) > distance) {
-				CreateNode ();
-			}
-		} else if (done == false) {
-			done = true;
-			lastNode.GetComponent<HingeJoint> ().connectedBody = player.GetComponent<Rigidbody> ();
-		}
-	}
-	void CreateNode() {
-		Vector3 pos2Create = player.transform.position - lastNode.transform.position;
-		pos2Create.Normalize ();
-		pos2Create *= distance;
-		pos2Create += (Vector3)lastNode.transform.position;
-
-		GameObject go = (GameObject)Instantiate (nodePrefab, pos2Create, Quaternion.identity);
-
-		go.transform.SetParent (transform);
-
-		lastNode.GetComponent<HingeJoint> ().connectedBody = go.GetComponent<Rigidbody> ();
-		lastNode = go;
-	}
-	*/

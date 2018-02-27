@@ -1,11 +1,10 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\RopeScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\HookScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\Hook.cs" Line="32" Column="31" />
-      <File FileName="Assets\Scripts\HookScript.cs" Line="39" Column="28" />
-      <File FileName="Assets\Scripts\BaseCharacterController.cs" Line="1" Column="1" NotebookId="1" />
-      <File FileName="Assets\Scripts\RopeScript.cs" Line="35" Column="2" NotebookId="1" />
+      <File FileName="Assets\Scripts\HookScript.cs" Line="91" Column="77" />
+      <File FileName="Assets\Scripts\BaseCharacterController.cs" Line="29" Column="1" NotebookId="1" />
+      <File FileName="Assets\Scripts\RopeScript.cs" Line="29" Column="1" NotebookId="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

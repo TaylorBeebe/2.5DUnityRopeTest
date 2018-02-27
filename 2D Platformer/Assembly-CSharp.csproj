@@ -54,7 +54,6 @@
      <Compile Include="Assets\Scripts\BaseCharacterController.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CharacterColliderPart.cs" />
-     <Compile Include="Assets\Scripts\Hook.cs" />
      <Compile Include="Assets\Scripts\HookScript.cs" />
      <Compile Include="Assets\Scripts\RopeScript.cs" />
  <Reference Include="UnityEngine.UI">

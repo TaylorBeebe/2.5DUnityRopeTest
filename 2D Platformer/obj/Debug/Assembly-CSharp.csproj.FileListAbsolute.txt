@@ -286,7 +286,6 @@ C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\obj\Debug\Assembly-CSharp.
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\Assembly-CSharp.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\Assembly-CSharp.pdb
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\nunit.framework.dll
-C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\SyntaxTree.VisualStudio.Unity.Bridge.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\UnityEditor.Advertisements.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\UnityEditor.Analytics.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\UnityEditor.Android.Extensions.dll
@@ -327,7 +326,6 @@ C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\Unity.UNetW
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\Unity.Cecil.Mdb.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\UnityEditor.iOS.Extensions.Common.dll
-C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\SyntaxTree.VisualStudio.Unity.Messaging.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\Unity.CecilTools.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\Unity.Cecil.Pdb.dll
 C:\Users\tdb1\Documents\GitHub\2D-Unity\2D Platformer\Temp\bin\Debug\UnityEngine.xml

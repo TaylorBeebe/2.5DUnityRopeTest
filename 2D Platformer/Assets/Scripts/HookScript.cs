@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class HookScript : MonoBehaviour {
 
-	private Rigidbody rb;
+//	private Rigidbody rb;
 
-	public float shootSpeed = 2;
+	public float shootSpeed = 1;
 
 	public bool extending = false;
 
@@ -16,14 +16,14 @@ public class HookScript : MonoBehaviour {
 
 	public GameObject hookOrigin;
 
-	private GameObject hook;
+	public GameObject hook;
 
 	private Vector3 shootDirection;
 	
 	// Initialize Line, Animator, And RigidBody
 	void Start () {
 		animator = this.GetComponent<Animator> ();
-		rb = this.GetComponent<Rigidbody> ();
+		//rb = this.GetComponent<Rigidbody> ();
 	}
 
 	void Update (){
@@ -33,19 +33,13 @@ public class HookScript : MonoBehaviour {
 			hookExtended = true;
 			animator.SetBool ("PlatformHookExtended", true);
 			extending = true;
-
+			Debug.Log (Input.mousePosition);
 			//Get Direction for hook shot
-			shootDirection = Input.mousePosition;
-			shootDirection.z = 0.0f;
-			shootDirection = Camera.main.ScreenToWorldPoint (shootDirection);
-			shootDirection = shootDirection - hookOrigin.transform.position;
-
-			//Instantiate hook shot after arm has time to move by creating coroutine
+			shootDirection = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0f);
+			shootDirection = Vector3.Normalize(shootDirection);
+			Debug.Log (shootDirection);
+			//Instantiate hook shot after arm has time to move
 			Invoke("WaitToShoot", 0.5f);
-			//StartCoroutine(WaitToShoot(0.5f));
-
-//			hook = Instantiate (hook2D, hookOrigin.transform.position, Quaternion.Euler (new Vector3 (0, 0, 0))) as GameObject;
-//			hook.GetComponent<Rigidbody> ().velocity = new Vector2 (shootDirection.x * speed, shootDirection.y * speed);
 		}
 
 		//Sets the hookOrigin cube to face the shootdirection at all times
@@ -91,11 +85,10 @@ public class HookScript : MonoBehaviour {
 		}
 
 	void WaitToShoot(){
-		hook = Instantiate (hook, hookOrigin.transform.position, Quaternion.Euler (new Vector3 (0, 0, 0))) as GameObject;
-		hook.GetComponent<Rigidbody> ().velocity = new Vector2 (shootDirection.x * shootSpeed, shootDirection.y * shootSpeed);
+		hook = (GameObject) Instantiate (hook, hookOrigin.transform.position, Quaternion.Euler (new Vector3 (0, 0, 0)));
+		hook.transform.LookAt (shootDirection);
+		hook.GetComponent<Rigidbody> ().AddForce(shootDirection * shootSpeed);
+		Debug.Log ("Hook velocity is: " + hook.GetComponent<Rigidbody> ().velocity);
 	}
 
-	}
-
-	//Coroutine that waits a fixed number of seconds so the arm has time to point in the direction
-	//of the shot
+}
