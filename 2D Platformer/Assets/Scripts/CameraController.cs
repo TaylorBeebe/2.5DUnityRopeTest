@@ -8,6 +8,7 @@ public class CameraController : MonoBehaviour {
 
 	public GameObject player;
 
+
 	void Start(){
 		offset = this.transform.position - player.transform.position;
 	}

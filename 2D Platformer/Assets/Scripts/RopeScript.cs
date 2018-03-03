@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class RopeScript : MonoBehaviour {
 
-	//Boolean checks if the hook has hit an object or has been interupted
+	//Boolean holds if the hook has hit an object or has been interupted
 	private bool extending = true;
 
+	//Boolean holds if the hook successfully attached to an object
 	private bool hooked = false;
 
-	//Boolean checks if hook is currently retracting due to interference
+	//Boolean hold if hook is currently retracting due to interference
 	private bool interferenceRetracting = false;
-
-	private bool hookLatched = false;
 
 	//Ray used to make sure nothing has come between hook and origin
 	private Ray ray;
@@ -20,26 +19,21 @@ public class RopeScript : MonoBehaviour {
 	//Speed the hook retracts
 	public float retractSpeed = 2f;
 
+	//Speed the hook extends
+	public float extendSpeed = 2f;
+
 	//Speed hook retracts if interference detected
 	public float interferenceRetractSpeed = 5f;
 
 	//furthest the rope can go
 	public float maxDistance = 50f;
 
+	//Where hook is heading
+	public Vector3 destination;
+
 	//distance constant that sets how far away the last node is before
 	//a new node is created
 	public float minDistance = 0.3f;
-
-	//set to true when the player has set the rope to retract or
-	//the rope has hit interference
-	public bool pullRopeIn = false;
-
-	//prefab to instantiate new nodes in the rope
-	public GameObject ropeNode;
-
-	//stores a list of all nodes currently in the rope
-	//private List<GameObject> nodes = new List<GameObject> ();
-	private List<GameObject> nodes = new List<GameObject>();
 
 	//renders line between each rope node
 	private LineRenderer line;
@@ -73,7 +67,13 @@ public class RopeScript : MonoBehaviour {
 	}
 
 	void Update(){
-		
+
+		transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
+
+		if (Vector3.Distance(transform.position, destination) <= 0.2f) {
+
+		}
+
 		//Check if rope was interfered with during deployment, destroy if reached origin 
 		if (interferenceRetracting) {
 			if (Vector3.Distance (this.transform.position, hookOrigin.transform.position) <= 0.2f) {
@@ -84,6 +84,7 @@ public class RopeScript : MonoBehaviour {
 		else if (extending) {
 			if (Physics.Linecast (transform.position, hookOrigin.transform.position, 8) ||
 				Vector3.Distance(this.transform.position, hookOrigin.transform.position) >= maxDistance) {
+
 				extending = false;
 				interferenceRetracting = true;
 				this.GetComponent<Collider> ().enabled = false;
@@ -111,8 +112,12 @@ public class RopeScript : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision col){
-
-		this.gameObject.GetComponent<Rigidbody> ().isKinematic = true;
+		
+		if (col.gameObject.tag == "Player" || col.gameObject.tag == "HookOrigin") {
+			Physics.IgnoreCollision (col.collider, this.GetComponent<Collider> ());
+		} else {
+			Debug.Log ("COLLIDED");
+		}
 
 		hooked = true;
 		
