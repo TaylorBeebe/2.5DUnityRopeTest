@@ -66,7 +66,7 @@ public class RopeScript : MonoBehaviour {
 
 	public LineRenderer line;
 
-	public GameObject hookOrigin;
+	public Rigidbody2D hookOrigin;
 
 	private GameObject lastNode;
 

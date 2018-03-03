@@ -298,6 +298,7 @@
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\CharacterColliderPart.cs" />
     <Compile Include="Assets\Scripts\Hook.cs" />
+    <Compile Include="Assets\Scripts\HoverEnemy.cs" />
     <Compile Include="Assets\Scripts\RopeScript.cs" />
     <Compile Include="Assets\Scripts\SimpleEnemy.cs" />
     <Compile Include="Assets\Scripts\SimplePlatform.cs" />
