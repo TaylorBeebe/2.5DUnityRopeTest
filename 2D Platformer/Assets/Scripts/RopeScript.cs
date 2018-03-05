@@ -47,12 +47,6 @@ public class RopeScript : MonoBehaviour {
 	//player gameobject
 	private GameObject player;
 
-	//used when instantiating a new node
-	private GameObject newNode;
-
-	//spawn location of new nodes. set to be slightly in front of hookOrigin
-	private Vector3 nodeSpawn;
-
 
 
 	void Start(){
@@ -70,26 +64,25 @@ public class RopeScript : MonoBehaviour {
 
 		transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
 
-		if (Vector3.Distance(transform.position, destination) <= 0.2f) {
-
+		if (Vector3.Distance(transform.position, destination) <= 0.2f && !hooked) {
+			Destroy (gameObject);
 		}
 
 		//Check if rope was interfered with during deployment, destroy if reached origin 
-		if (interferenceRetracting) {
+		else if (interferenceRetracting) {
 			if (Vector3.Distance (this.transform.position, hookOrigin.transform.position) <= 0.2f) {
-				Destroy (this);
+				Destroy (gameObject);
 			}
-		} 
-
-		else if (extending) {
-			if (Physics.Linecast (transform.position, hookOrigin.transform.position, 8) ||
-				Vector3.Distance(this.transform.position, hookOrigin.transform.position) >= maxDistance) {
+		} else if (extending) {
+			if (Physics.Linecast (transform.position, hookOrigin.transform.position, 8)) {
 
 				extending = false;
 				interferenceRetracting = true;
 				this.GetComponent<Collider> ().enabled = false;
 				Vector3.MoveTowards (transform.position, hookOrigin.transform.position, interferenceRetractSpeed);
 			}
+		} else if (hooked) {
+			
 		}
 
 
@@ -119,6 +112,7 @@ public class RopeScript : MonoBehaviour {
 			Debug.Log ("COLLIDED");
 		}
 
+		extending = false;
 		hooked = true;
 		
 	}

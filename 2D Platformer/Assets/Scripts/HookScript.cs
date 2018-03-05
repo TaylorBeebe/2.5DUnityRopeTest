@@ -14,63 +14,78 @@ public class HookScript : MonoBehaviour {
 
 	private bool hookExtended = false;
 
+	private bool firing;
+
 	Animator animator;
 
 	public GameObject hookOrigin;
 
 	public GameObject hook;
 
-	private GameObject hookShot;
+	public GameObject hookShot;
 
 	private Vector3 shootDirection;
 
 	public GameObject reticuleTestCube;
 
-	
-	// Initialize Line, Animator, And RigidBody
+	public LineRenderer lineRenderer;
+
+	private Vector3 hookDestination;
+
+	private RaycastHit hit;
+
+	// Initialize Line, Animator
 	void Start () {
 		animator = this.GetComponent<Animator> ();
+		lineRenderer = this.GetComponent<LineRenderer> ();
 		//rb = this.GetComponent<Rigidbody> ();
 	}
 
 	void Update (){
 
-		hookOrigin.transform.LookAt (shootDirection);
+
 
 		shootDirection = Input.mousePosition;
 		shootDirection.z = 5f; // Camera is at z = -5
 		shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
 
+		hookOrigin.transform.LookAt (shootDirection);
+
+		//reticuleTestCube.transform.position = shootDirection;
+
 		if (Input.GetButtonDown ("Fire1") && !hookExtended) {
+			firing = true;
+		}
 
-			//Set both animator and internal hookExtended variables to true
-//			hookExtended = true;
-			animator.SetBool ("PlatformHookExtended", true);
-//			extending = true;
+		if (firing) {
+			
+			if (Physics.Raycast (hookOrigin.transform.position, hookOrigin.transform.forward * maxRopeLength, out hit, maxRopeLength)) {
+				hookDestination = hit.point;
+			} else {
+				hookDestination = hookOrigin.transform.position + hookOrigin.transform.forward * maxRopeLength;
+			}
 
-//			shootDirection = Input.mousePosition;
-//			shootDirection.z = 5f; // Camera is at z = -5
-//			shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
+			hookDestination.z = 0f;
 
-			//reticuleTestCube.transform.position = shootDirection;
+			lineRenderer.SetPosition (0, hookOrigin.transform.position);
+			lineRenderer.SetPosition (1, hookDestination);
+		}
+
+		if (Input.GetButtonUp ("Fire1") && !hookExtended) {
+			firing = false;
+
+			lineRenderer.SetPosition (0, Vector3.zero);
+			lineRenderer.SetPosition (1, Vector3.zero);
+
+			hookExtended = true;
 
 			//Instantiate hook shot after arm has time to move
 			Invoke("WaitToShoot", 0.1f);
 		}
 
-		//Sets the hookOrigin cube to face the shootdirection at all times
-		if (hookExtended) {
-			hookOrigin.transform.LookAt (shootDirection);
-		}
-
-//		if (!extending) {
-//			shootDirection = Vector3.zero;
-//		}
-
 		//If hook has been destroyed, set hookExtended to false
-		if (hook == null) {
+		if (hookShot == null) {
 			hookExtended = false;
-			animator.SetBool ("PlatformHookExtended", false);
 		}
 	}
 
@@ -80,40 +95,27 @@ public class HookScript : MonoBehaviour {
 
 	//Directs the animator to move left arm toward the hook
 	void OnAnimatorIK(){
-		//shootDirection = Input.mousePosition;
-		//if (animator.GetBool ("PlatformHookExtended")) {
-			
-			//Vector3 IKTarget;
-
-			//Sets the target of the IK based on whether the hook was just shot or
-			//has attached to an object
-//			if (hook != null && shootDirection != Vector3.zero) {
-//				IKTarget = shootDirection;
-//			} else {
-//				IKTarget = hook.transform.position;
-//			}
-
-			//Sets the weights of the IK bones
 			animator.SetLookAtWeight (0.4f);
 			animator.SetLookAtPosition (shootDirection);
 			animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 0.8f);
 			animator.SetIKPosition (AvatarIKGoal.LeftHand, shootDirection);
-			//}
 		}
 
 	void WaitToShoot(){
+		
 		hookOrigin.transform.LookAt (shootDirection, Vector3.forward);
+
 		hookShot = (GameObject) Instantiate (hook, hookOrigin.transform.position + hookOrigin.transform.forward * 0.09f, hookOrigin.transform.rotation);
 
-		RaycastHit hit;
-
-		//Debug.DrawRay (hookShot.transform.position, hookShot.transform.forward * maxRopeLength, Color.green, 2f);
+		//Debug.DrawRay (hook.transform.position, hook.transform.forward * maxRopeLength, Color.green, 2f);
 
 		if (Physics.Raycast (hookShot.transform.position, hookShot.transform.forward * maxRopeLength, out hit, maxRopeLength)) {
-			hookShot.GetComponent<RopeScript> ().destination = hit.point;
+			hookDestination = hit.point;
 		} else {
-			hookShot.GetComponent<RopeScript>().destination = hookShot.transform.position + hookShot.transform.forward * maxRopeLength;
+			hookDestination = hookShot.transform.position + hookShot.transform.forward * maxRopeLength;
 		}
+		hookDestination.z = 0f;
+		hookShot.GetComponent<RopeScript> ().destination = hookDestination;
 	}
 
 }
