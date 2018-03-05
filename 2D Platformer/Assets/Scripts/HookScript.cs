@@ -57,35 +57,43 @@ public class HookScript : MonoBehaviour {
 			firing = true;
 		}
 
-		if (firing) {
-			
-			if (Physics.Raycast (hookOrigin.transform.position, hookOrigin.transform.forward * maxRopeLength, out hit, maxRopeLength)) {
-				hookDestination = hit.point;
-			} else {
-				hookDestination = hookOrigin.transform.position + hookOrigin.transform.forward * maxRopeLength;
-			}
-
-			hookDestination.z = 0f;
-
-			lineRenderer.SetPosition (0, hookOrigin.transform.position);
-			lineRenderer.SetPosition (1, hookDestination);
-		}
-
 		if (Input.GetButtonUp ("Fire1") && !hookExtended) {
-			firing = false;
 
+			//Stop the firing loop from running
+			firing = false;
+			//Reset Vertices in Line Renderer
 			lineRenderer.SetPosition (0, Vector3.zero);
 			lineRenderer.SetPosition (1, Vector3.zero);
 
 			hookExtended = true;
+
+			hookShot = hook;
 
 			//Instantiate hook shot after arm has time to move
 			Invoke("WaitToShoot", 0.1f);
 		}
 
 		//If hook has been destroyed, set hookExtended to false
-		if (hookShot == null) {
+		else if (hookShot == null) {
 			hookExtended = false;
+		}
+	}
+
+	void LateUpdate(){
+		if (firing) {
+			//Check where hook will land
+			if (Physics.Raycast (hookOrigin.transform.position, hookOrigin.transform.forward * maxRopeLength, out hit, maxRopeLength)) {
+				hookDestination = hit.point;
+			} else {
+				hookDestination = hookOrigin.transform.position + hookOrigin.transform.forward * maxRopeLength;
+			}
+
+			//Always set z = 0
+			hookDestination.z = 0f;
+
+			//Set the vertices of Line Renderer to display where the hook will land
+			lineRenderer.SetPosition (0, hookOrigin.transform.position);
+			lineRenderer.SetPosition (1, hookDestination);
 		}
 	}
 
@@ -105,16 +113,19 @@ public class HookScript : MonoBehaviour {
 		
 		hookOrigin.transform.LookAt (shootDirection, Vector3.forward);
 
-		hookShot = (GameObject) Instantiate (hook, hookOrigin.transform.position + hookOrigin.transform.forward * 0.09f, hookOrigin.transform.rotation);
+		Vector3 hookSpawn = hookOrigin.transform.position + hookOrigin.transform.forward * 0.09f;
 
 		//Debug.DrawRay (hook.transform.position, hook.transform.forward * maxRopeLength, Color.green, 2f);
 
-		if (Physics.Raycast (hookShot.transform.position, hookShot.transform.forward * maxRopeLength, out hit, maxRopeLength)) {
+		if (Physics.Raycast (hookSpawn, hookOrigin.transform.forward * maxRopeLength, out hit, maxRopeLength)) {
 			hookDestination = hit.point;
 		} else {
-			hookDestination = hookShot.transform.position + hookShot.transform.forward * maxRopeLength;
+			hookDestination = hookOrigin.transform.position + hookOrigin.transform.forward * maxRopeLength;
 		}
+
 		hookDestination.z = 0f;
+		Debug.Log ("Destination at instantiation: " + hookDestination);
+		hookShot = (GameObject) Instantiate (hook, hookSpawn, hookOrigin.transform.rotation);
 		hookShot.GetComponent<RopeScript> ().destination = hookDestination;
 	}
 

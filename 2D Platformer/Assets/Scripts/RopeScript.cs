@@ -10,8 +10,14 @@ public class RopeScript : MonoBehaviour {
 	//Boolean holds if the hook successfully attached to an object
 	private bool hooked = false;
 
+	//Boolean holds if the hook is currently retracting
+	private bool retracting = false;
+
 	//Boolean hold if hook is currently retracting due to interference
 	private bool interferenceRetracting = false;
+
+	//Boolean holds if hook has reached last node during retraction
+	private bool arrivedToLastRetractionNode;
 
 	//Ray used to make sure nothing has come between hook and origin
 	private Ray ray;
@@ -41,12 +47,11 @@ public class RopeScript : MonoBehaviour {
 	//origin of the hook on players arm
 	private GameObject hookOrigin;
 
-	//last node created. initially set to be the hook
-	private GameObject lastNode;
-
 	//player gameobject
 	private GameObject player;
 
+	//List contating all the nodes in the rope
+	private Stack<Vector3> nodes = new Stack<Vector3> ();
 
 
 	void Start(){
@@ -58,32 +63,48 @@ public class RopeScript : MonoBehaviour {
 
 		//Get the hook's origin
 		hookOrigin = GameObject.FindGameObjectWithTag ("HookOrigin");
+
+		nodes.Push (hookOrigin.transform.position);
+
+		StartCoroutine ("HookMovement");
+
 	}
 
 	void Update(){
 
-		transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
+		//transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
+//		if (!hooked){
+//			HookMovement ();
+//		}
+
 
 		if (Vector3.Distance(transform.position, destination) <= 0.2f && !hooked) {
-			Destroy (gameObject);
+
+			retracting = true;
+			destination = nodes.Peek ();
+			StartCoroutine ("HookMovement");
+
+			//Destroy (gameObject);
+
 		}
 
 		//Check if rope was interfered with during deployment, destroy if reached origin 
-		else if (interferenceRetracting) {
-			if (Vector3.Distance (this.transform.position, hookOrigin.transform.position) <= 0.2f) {
-				Destroy (gameObject);
-			}
-		} else if (extending) {
-			if (Physics.Linecast (transform.position, hookOrigin.transform.position, 8)) {
-
-				extending = false;
-				interferenceRetracting = true;
-				this.GetComponent<Collider> ().enabled = false;
-				Vector3.MoveTowards (transform.position, hookOrigin.transform.position, interferenceRetractSpeed);
-			}
-		} else if (hooked) {
-			
-		}
+//		 else if (extending) {
+//			if (Physics.Linecast (transform.position, hookOrigin.transform.position, 8)) {
+//
+//				extending = false;
+//				retracting = true;
+//				destination = nodes.Peek ();
+//
+//				this.GetComponent<Collider> ().enabled = false;
+//
+//				StopCoroutine ("HookMovement");
+//				StartCoroutine ("HookMovement");
+//			
+//			}
+//		} else if (hooked) {
+//			
+//		}
 
 
 	}
@@ -101,9 +122,12 @@ public class RopeScript : MonoBehaviour {
 
 	void retractRope(){
 
+		foreach(Vector3 g in nodes){
+			Vector3.MoveTowards (this.transform.position, g, retractSpeed);
+		}
 
 	}
-
+	/*
 	void OnCollisionEnter(Collision col){
 		
 		if (col.gameObject.tag == "Player" || col.gameObject.tag == "HookOrigin") {
@@ -116,5 +140,32 @@ public class RopeScript : MonoBehaviour {
 		hooked = true;
 		
 	}
-
+	*/
+	IEnumerator HookMovement(){
+		Debug.Log ("Within Coroutine");
+			
+		while (true) {
+			Debug.Log ((Vector3.Distance (this.transform.position, destination) <= 0.05f));
+			Debug.Log (Vector3.Distance (this.transform.position, destination));
+			if (Vector3.Distance (this.transform.position, destination) <= 0.05f){
+				if (retracting) {
+					if (nodes.Count > 1) {
+						nodes.Pop ();
+						destination = nodes.Peek ();
+					} else {
+						Destroy (gameObject);
+						yield break;
+					}
+				} else {
+					Debug.Log ("REACHED DESTINATION");
+					Debug.Log ("Destination: " + destination);
+					yield break;
+				}
+			} else {
+				transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
+				yield return null;
+			}
+		}
+			
+	}
 }
