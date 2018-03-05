@@ -51,7 +51,7 @@ public class RopeScript : MonoBehaviour {
 	private GameObject player;
 
 	//List contating all the nodes in the rope
-	private Stack<Vector3> nodes = new Stack<Vector3> ();
+	private Stack<GameObject> nodes = new Stack<GameObject> ();
 
 
 	void Start(){
@@ -64,7 +64,7 @@ public class RopeScript : MonoBehaviour {
 		//Get the hook's origin
 		hookOrigin = GameObject.FindGameObjectWithTag ("HookOrigin");
 
-		nodes.Push (hookOrigin.transform.position);
+		nodes.Push (hookOrigin);
 
 		StartCoroutine ("HookMovement");
 
@@ -81,7 +81,7 @@ public class RopeScript : MonoBehaviour {
 		if (Vector3.Distance(transform.position, destination) <= 0.2f && !hooked) {
 
 			retracting = true;
-			destination = nodes.Peek ();
+			destination = nodes.Peek ().transform.position;
 			StartCoroutine ("HookMovement");
 
 			//Destroy (gameObject);
@@ -122,9 +122,9 @@ public class RopeScript : MonoBehaviour {
 
 	void retractRope(){
 
-		foreach(Vector3 g in nodes){
-			Vector3.MoveTowards (this.transform.position, g, retractSpeed);
-		}
+//		foreach(Vector3 g in nodes){
+//			Vector3.MoveTowards (this.transform.position, g, retractSpeed);
+//		}
 
 	}
 	/*
@@ -142,26 +142,37 @@ public class RopeScript : MonoBehaviour {
 	}
 	*/
 	IEnumerator HookMovement(){
-		Debug.Log ("Within Coroutine");
-			
+//		Debug.Log ("Within Coroutine");
+
+		//Excutes a loop until hook as reached its target
 		while (true) {
-			Debug.Log ((Vector3.Distance (this.transform.position, destination) <= 0.05f));
-			Debug.Log (Vector3.Distance (this.transform.position, destination));
+//			Debug.Log ((Vector3.Distance (this.transform.position, destination) <= 0.05f));
+//			Debug.Log (Vector3.Distance (this.transform.position, destination));
+
+			//Checks the distance between hook and destionation
 			if (Vector3.Distance (this.transform.position, destination) <= 0.05f){
+
+				//If the hook is currently retracting, check if there is another node in the sequence to go to
 				if (retracting) {
 					if (nodes.Count > 1) {
 						nodes.Pop ();
-						destination = nodes.Peek ();
+						destination = nodes.Peek ().transform.position;
 					} else {
 						Destroy (gameObject);
 						yield break;
 					}
+
+				//If not retracting, this must be the final destination
 				} else {
-					Debug.Log ("REACHED DESTINATION");
-					Debug.Log ("Destination: " + destination);
+//					Debug.Log ("REACHED DESTINATION");
+//					Debug.Log ("Destination: " + destination);
 					yield break;
 				}
 			} else {
+
+				if (retracting) {
+					destination = nodes.Peek ().transform.position;
+				}
 				transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
 				yield return null;
 			}
