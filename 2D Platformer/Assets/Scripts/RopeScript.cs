@@ -34,6 +34,9 @@ public class RopeScript : MonoBehaviour {
 	//Where hook is heading
 	public Vector3 destination;
 
+	//Last node in the rope (Nodes are set when player is out of sight of hook)
+	public GameObject lastNode;
+
 	//distance constant that sets how far away the last node is before
 	//a new node is created
 	public float minDistance = 0.3f;
@@ -64,26 +67,34 @@ public class RopeScript : MonoBehaviour {
 		//Push the origin of hook onto stack
 		nodes.Push (hookOrigin);
 
+		//last node is intially the hoook
+		lastNode = this.gameObject;
+
+		//Hook is initially extending
 		extending = true;
 
+		retracting = false;
+
+		//Start coroutine that controls hook movement
 		StartCoroutine ("HookMovement");
 
 	}
 
 	void Update(){
 
-		if (Vector3.Distance (transform.position, destination) <= 0.2f && !hooked) {
-
-			retracting = true;
-			destination = nodes.Peek ().transform.position;
-			StartCoroutine ("HookMovement");
-		} 
+//		if (Vector3.Distance (transform.position, destination) <= 0.2f && !hooked) {
+//			Debug.Log ("Destination: " + destination);
+//			Debug.Log ("Reached limit and not hooked. Retracitng");
+//			retracting = true;
+//			destination = nodes.Peek ().transform.position;
+//			StartCoroutine ("HookMovement");
+//		} 
 
 		//Check if rope was interfered with during deployment, destroy if reached origin 
-		else if (extending) {
+		if (extending) {
 			if (Physics.Linecast (transform.position, hookOrigin.transform.position)) {
 
-				//Debug.Log ("Extension interupted!");
+				Debug.Log ("Extension interupted!");
 				extending = false;
 				retracting = true;
 				destination = nodes.Peek ().transform.position;
@@ -96,9 +107,9 @@ public class RopeScript : MonoBehaviour {
 			}
 		} 
 
-		else if (hooked) {
-
-		}
+//		else if (hooked) {
+//
+//		}
 
 	}
 	void LateUpdate(){
@@ -109,35 +120,43 @@ public class RopeScript : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision col){
-		
+		Debug.Log ("On collision enter");
 		if (col.gameObject.tag == "Player" || col.gameObject.tag == "HookOrigin") {
 			Physics.IgnoreCollision (col.collider, this.GetComponent<Collider> ());
 		} else {
 			Debug.Log ("COLLIDED");
-		}
+			extending = false;
+			hooked = true;
 
-		extending = false;
-		hooked = true;
-		
+			Debug.Log (player);
+			player.GetComponent<HookScript> ().hooked = true;
+		}
 	}
 
 	IEnumerator HookMovement(){
-//		Debug.Log ("Within Coroutine");
-
 		//Excutes a loop until hook as reached its target
 		while (true) {
 //			Debug.Log ((Vector3.Distance (this.transform.position, destination) <= 0.05f));
 //			Debug.Log (Vector3.Distance (this.transform.position, destination));
 
+//			Debug.Log ("Within Coroutine");
+//			Debug.Log ("Hooked: " + hooked);
+//			Debug.Log ("Retracting: " + retracting);
+
 			if (hooked) {
-				yield return null;
+				yield break;
 			}
 
 			//Checks the distance between hook and destionation
-			if (Vector3.Distance (this.transform.position, destination) <= 0.05f){
+			if (Vector3.Distance (this.transform.position, destination) <= 0.01f){
+				
+//				Debug.Log ("Distance between this and destination is less than 0.05f");
 
 				//If the hook is currently retracting, check if there is another node in the sequence to go to
 				if (retracting) {
+					
+//					Debug.Log ("Hook is retracting");
+
 					curHookSpeed = retractSpeed;
 					if (nodes.Count > 1) {
 						nodes.Pop ();
@@ -148,13 +167,18 @@ public class RopeScript : MonoBehaviour {
 					}
 
 				//If not retracting, this must be the final destination
-				} else {
-//					Debug.Log ("REACHED DESTINATION");
-//					Debug.Log ("Destination: " + destination);
+				} else if (!hooked) {
+					
+//					Debug.Log ("Reached limit and not hooked. Retracting");
+
 					extending = false;
-					yield break;
+					retracting = true;
+					destination = nodes.Peek ().transform.position;
+					yield return null;
 				}
 			} else {
+				
+//				Debug.Log ("In else statement of coroutine");
 
 				if (retracting) {
 					curHookSpeed = retractSpeed;
@@ -164,6 +188,9 @@ public class RopeScript : MonoBehaviour {
 					curHookSpeed = extendSpeed;
 				}
 				transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
+
+//				Debug.Log ("Yielding return null");
+
 				yield return null;
 			}
 		}

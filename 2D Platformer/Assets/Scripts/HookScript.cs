@@ -4,34 +4,42 @@ using UnityEngine;
 
 public class HookScript : MonoBehaviour {
 
-//	private Rigidbody rb;
-
-	public float shootSpeed = 50f;
-
+	//Max length hook can travel
 	public float maxRopeLength = 30f;
 
-	public bool extending = false;
-
+	//True if hook is currently deployed
 	private bool hookExtended = false;
 
-	private bool firing;
+	//True if player is holding down hook fire button
+	private bool firing = false;
+
+	//True if player is currently hooked
+	public bool hooked = false;
 
 	Animator animator;
 
+	//cube located on player hook arm
 	public GameObject hookOrigin;
 
+	//Hook prefab
 	public GameObject hook;
 
+	//Instance of hook
 	public GameObject hookShot;
 
+	//Direction hook will be fired
 	private Vector3 shootDirection;
 
+	//Cube that follows mouse to test for mouse location on screen
 	public GameObject reticuleTestCube;
 
+	//Renders line when player is holding down hook fire button
 	public LineRenderer lineRenderer;
 
+	//Stores destination of hook
 	private Vector3 hookDestination;
 
+	//Raycast for finding destination of hook
 	private RaycastHit hit;
 
 	// Initialize Line, Animator
@@ -53,14 +61,26 @@ public class HookScript : MonoBehaviour {
 
 		//reticuleTestCube.transform.position = shootDirection;
 
+		//If player hitting hook fire button, set firing to true so destination line can be rendered
 		if (Input.GetButtonDown ("Fire1") && !hookExtended) {
 			firing = true;
-		} else if (Input.GetButtonDown ("Fire1") && hookExtended) {
-			hookShot.GetComponent<RopeScript> ().retracting = true;
 		}
 
-		if (Input.GetButtonUp ("Fire1") && !hookExtended) {
+		//If player clicks while hook is deployed, retract hook
+		else if (Input.GetButtonDown ("Fire1") && (hookExtended || hooked)) {
+			
+//			Debug.Log ("Setting retracting to true");
 
+			hookShot.GetComponent<RopeScript> ().retracting = true;
+			hooked = false;
+		} 
+
+		else if (Input.GetKeyDown("e") && hooked) {
+		}
+
+
+
+		if (Input.GetButtonUp ("Fire1") && !hookExtended) {
 			//Stop the firing loop from running
 			firing = false;
 			//Reset Vertices in Line Renderer
@@ -125,6 +145,7 @@ public class HookScript : MonoBehaviour {
 			hookDestination = hookOrigin.transform.position + hookOrigin.transform.forward * maxRopeLength;
 		}
 
+		//Always align hook destination with z = 0
 		hookDestination.z = 0f; 
 		Debug.Log ("Destination at instantiation: " + hookDestination);
 		hookShot = (GameObject) Instantiate (hook, hookSpawn, hookOrigin.transform.rotation);

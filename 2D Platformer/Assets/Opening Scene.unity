@@ -143,9 +143,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ee5ed2439550844990d32691c124640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootSpeed: 30
   maxRopeLength: 20
-  extending: 0
+  hooked: 0
   hookOrigin: {fileID: 1038864885}
   hook: {fileID: 1876003219928328, guid: ebf7160d151dd3644bad60aa9da21452, type: 2}
   hookShot: {fileID: 0}
@@ -1069,35 +1068,35 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 100016, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 100026, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 100014, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 100034, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 100018, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 100010, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}

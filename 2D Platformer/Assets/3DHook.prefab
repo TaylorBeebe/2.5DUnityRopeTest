@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4244181959324154}
   - component: {fileID: 33967640112909184}
   - component: {fileID: 135968589534447148}
+  - component: {fileID: 54686863818789314}
   - component: {fileID: 23975016003423580}
-  - component: {fileID: 54893699711953444}
   - component: {fileID: 114665862430435604}
   - component: {fileID: 120187169369328192}
   m_Layer: 8
@@ -86,7 +86,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1876003219928328}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &54893699711953444
+--- !u!54 &54686863818789314
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -99,7 +99,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 8
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &114665862430435604
 MonoBehaviour:
@@ -112,11 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf8f220e737f3e94f95d128641a01e0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  retracting: 0
+  retracting: 1
   retractSpeed: 100
   extendSpeed: 35
   maxDistance: 50
   destination: {x: 0, y: 0, z: 0}
+  lastNode: {fileID: 0}
   minDistance: 0.3
 --- !u!120 &120187169369328192
 LineRenderer:
