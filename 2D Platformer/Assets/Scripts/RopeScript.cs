@@ -11,10 +11,7 @@ public class RopeScript : MonoBehaviour {
 	private bool hooked = false;
 
 	//Boolean holds if the hook is currently retracting
-	private bool retracting = false;
-
-	//Boolean hold if hook is currently retracting due to interference
-	private bool interferenceRetracting = false;
+	public bool retracting = false;
 
 	//Boolean holds if hook has reached last node during retraction
 	private bool arrivedToLastRetractionNode;
@@ -23,16 +20,16 @@ public class RopeScript : MonoBehaviour {
 	private Ray ray;
 
 	//Speed the hook retracts
-	public float retractSpeed = 2f;
+	public float retractSpeed = 100f;
 
 	//Speed the hook extends
-	public float extendSpeed = 2f;
-
-	//Speed hook retracts if interference detected
-	public float interferenceRetractSpeed = 5f;
+	public float extendSpeed = 35f;
 
 	//furthest the rope can go
 	public float maxDistance = 50f;
+
+	//stores current speed of hook
+	private float curHookSpeed;
 
 	//Where hook is heading
 	public Vector3 destination;
@@ -64,7 +61,10 @@ public class RopeScript : MonoBehaviour {
 		//Get the hook's origin
 		hookOrigin = GameObject.FindGameObjectWithTag ("HookOrigin");
 
+		//Push the origin of hook onto stack
 		nodes.Push (hookOrigin);
+
+		extending = true;
 
 		StartCoroutine ("HookMovement");
 
@@ -72,62 +72,42 @@ public class RopeScript : MonoBehaviour {
 
 	void Update(){
 
-		//transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
-//		if (!hooked){
-//			HookMovement ();
-//		}
-
-
-		if (Vector3.Distance(transform.position, destination) <= 0.2f && !hooked) {
+		if (Vector3.Distance (transform.position, destination) <= 0.2f && !hooked) {
 
 			retracting = true;
 			destination = nodes.Peek ().transform.position;
 			StartCoroutine ("HookMovement");
-
-			//Destroy (gameObject);
-
-		}
+		} 
 
 		//Check if rope was interfered with during deployment, destroy if reached origin 
-//		 else if (extending) {
-//			if (Physics.Linecast (transform.position, hookOrigin.transform.position, 8)) {
-//
-//				extending = false;
-//				retracting = true;
-//				destination = nodes.Peek ();
-//
-//				this.GetComponent<Collider> ().enabled = false;
-//
-//				StopCoroutine ("HookMovement");
-//				StartCoroutine ("HookMovement");
-//			
-//			}
-//		} else if (hooked) {
-//			
-//		}
+		else if (extending) {
+			if (Physics.Linecast (transform.position, hookOrigin.transform.position)) {
 
+				//Debug.Log ("Extension interupted!");
+				extending = false;
+				retracting = true;
+				destination = nodes.Peek ().transform.position;
+
+				this.GetComponent<Collider> ().enabled = false;
+
+				StopCoroutine ("HookMovement");
+				StartCoroutine ("HookMovement");
+			
+			}
+		} 
+
+		else if (hooked) {
+
+		}
 
 	}
 	void LateUpdate(){
 
-//		for (int x = 0; x < nodes.Count; x++) {
-//			nodes3D[x].transform.position = nodes[x].transform.position;
-//		}
+		line.SetPosition (0, hookOrigin.transform.position);
+		line.SetPosition (1, this.transform.position);
 		
 	}
-	void extendRope(){
-		
-	
-	}
 
-	void retractRope(){
-
-//		foreach(Vector3 g in nodes){
-//			Vector3.MoveTowards (this.transform.position, g, retractSpeed);
-//		}
-
-	}
-	/*
 	void OnCollisionEnter(Collision col){
 		
 		if (col.gameObject.tag == "Player" || col.gameObject.tag == "HookOrigin") {
@@ -140,7 +120,7 @@ public class RopeScript : MonoBehaviour {
 		hooked = true;
 		
 	}
-	*/
+
 	IEnumerator HookMovement(){
 //		Debug.Log ("Within Coroutine");
 
@@ -149,11 +129,16 @@ public class RopeScript : MonoBehaviour {
 //			Debug.Log ((Vector3.Distance (this.transform.position, destination) <= 0.05f));
 //			Debug.Log (Vector3.Distance (this.transform.position, destination));
 
+			if (hooked) {
+				yield return null;
+			}
+
 			//Checks the distance between hook and destionation
 			if (Vector3.Distance (this.transform.position, destination) <= 0.05f){
 
 				//If the hook is currently retracting, check if there is another node in the sequence to go to
 				if (retracting) {
+					curHookSpeed = retractSpeed;
 					if (nodes.Count > 1) {
 						nodes.Pop ();
 						destination = nodes.Peek ().transform.position;
@@ -166,12 +151,17 @@ public class RopeScript : MonoBehaviour {
 				} else {
 //					Debug.Log ("REACHED DESTINATION");
 //					Debug.Log ("Destination: " + destination);
+					extending = false;
 					yield break;
 				}
 			} else {
 
 				if (retracting) {
+					curHookSpeed = retractSpeed;
 					destination = nodes.Peek ().transform.position;
+					
+				} else{
+					curHookSpeed = extendSpeed;
 				}
 				transform.position = Vector3.MoveTowards (transform.position, destination, extendSpeed * Time.deltaTime);
 				yield return null;

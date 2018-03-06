@@ -55,6 +55,8 @@ public class HookScript : MonoBehaviour {
 
 		if (Input.GetButtonDown ("Fire1") && !hookExtended) {
 			firing = true;
+		} else if (Input.GetButtonDown ("Fire1") && hookExtended) {
+			hookShot.GetComponent<RopeScript> ().retracting = true;
 		}
 
 		if (Input.GetButtonUp ("Fire1") && !hookExtended) {
@@ -123,7 +125,7 @@ public class HookScript : MonoBehaviour {
 			hookDestination = hookOrigin.transform.position + hookOrigin.transform.forward * maxRopeLength;
 		}
 
-		hookDestination.z = 0f;
+		hookDestination.z = 0f; 
 		Debug.Log ("Destination at instantiation: " + hookDestination);
 		hookShot = (GameObject) Instantiate (hook, hookSpawn, hookOrigin.transform.rotation);
 		hookShot.GetComponent<RopeScript> ().destination = hookDestination;
