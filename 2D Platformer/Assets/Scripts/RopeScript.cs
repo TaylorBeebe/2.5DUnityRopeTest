@@ -82,14 +82,6 @@ public class RopeScript : MonoBehaviour {
 
 	void Update(){
 
-//		if (Vector3.Distance (transform.position, destination) <= 0.2f && !hooked) {
-//			Debug.Log ("Destination: " + destination);
-//			Debug.Log ("Reached limit and not hooked. Retracitng");
-//			retracting = true;
-//			destination = nodes.Peek ().transform.position;
-//			StartCoroutine ("HookMovement");
-//		} 
-
 		//Check if rope was interfered with during deployment, destroy if reached origin 
 		if (extending) {
 			if (Physics.Linecast (transform.position, hookOrigin.transform.position)) {
@@ -128,7 +120,6 @@ public class RopeScript : MonoBehaviour {
 			extending = false;
 			hooked = true;
 
-			Debug.Log (player);
 			player.GetComponent<HookScript> ().hooked = true;
 		}
 	}

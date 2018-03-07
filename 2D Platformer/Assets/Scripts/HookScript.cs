@@ -16,6 +16,7 @@ public class HookScript : MonoBehaviour {
 	//True if player is currently hooked
 	public bool hooked = false;
 
+	//Main animator
 	Animator animator;
 
 	//cube located on player hook arm
@@ -51,8 +52,6 @@ public class HookScript : MonoBehaviour {
 
 	void Update (){
 
-
-
 		shootDirection = Input.mousePosition;
 		shootDirection.z = 5f; // Camera is at z = -5
 		shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
@@ -77,9 +76,7 @@ public class HookScript : MonoBehaviour {
 
 		else if (Input.GetKeyDown("e") && hooked) {
 		}
-
-
-
+			
 		if (Input.GetButtonUp ("Fire1") && !hookExtended) {
 			//Stop the firing loop from running
 			firing = false;
@@ -151,5 +148,4 @@ public class HookScript : MonoBehaviour {
 		hookShot = (GameObject) Instantiate (hook, hookSpawn, hookOrigin.transform.rotation);
 		hookShot.GetComponent<RopeScript> ().destination = hookDestination;
 	}
-
 }
