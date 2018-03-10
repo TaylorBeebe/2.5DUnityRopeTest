@@ -144,12 +144,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxRopeLength: 20
+  retractSpeed: 100
+  extendSpeed: 35
+  extending: 1
+  retracting: 0
   hooked: 0
   hookOrigin: {fileID: 1038864885}
   hook: {fileID: 1876003219928328, guid: ebf7160d151dd3644bad60aa9da21452, type: 2}
   hookShot: {fileID: 0}
   reticuleTestCube: {fileID: 207702420}
-  lineRenderer: {fileID: 0}
+  lineRendererFiringColor: {fileID: 2100000, guid: f96d4cd6c86849741940e34119a87df8,
+    type: 2}
+  lineRendererRopeColor: {fileID: 2100000, guid: 35753c89f1b7a3d4cb87931de0579c4c,
+    type: 2}
 --- !u!4 &13144951 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400028, guid: b83c424bffe253249bd8179dc81f5bcc, type: 3}
