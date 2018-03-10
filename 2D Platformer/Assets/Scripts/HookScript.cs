@@ -136,6 +136,8 @@ public class HookScript : MonoBehaviour {
 			extending = false;
 			retracting = true;
 
+			hookShot.GetComponent<Rigidbody> ().isKinematic = false;
+
 			StopCoroutine ("HookMovement");
 			StartCoroutine ("HookMovement");
 
@@ -158,9 +160,6 @@ public class HookScript : MonoBehaviour {
 			//Set extended to true for other method dependencies
 			hookExtended = true;
 
-			//Set hookShot to be an instance of the hook prefab
-			//hookShot = hook;
-			Debug.Log("Invoking waittoshoot. Extending: " + extending);
 			//Instantiate hook shot after arm has time to move
 			Invoke("WaitToShoot", 0.1f);
 		}
@@ -203,18 +202,15 @@ public class HookScript : MonoBehaviour {
 			lineRenderer.SetPosition (1, hookDestination);
 		} else if ((extending || retracting || hooked) && hookShot != null) {
 			
-			Debug.Log("hooked: " + hooked);
-			Debug.Log("extending: " + extending);
-			Debug.Log("retracting: " + retracting);
+//			Debug.Log("hooked: " + hooked);
+//			Debug.Log("extending: " + extending);
+//			Debug.Log("retracting: " + retracting);
 
 			lineRenderer.material = lineRendererRopeColor;
 
 			lineRenderer.SetPosition (0, hookOrigin.transform.position);
 			lineRenderer.SetPosition (1, hookShot.transform.position);
 
-		} else {
-			lineRenderer.SetPosition (0, Vector3.zero);
-			lineRenderer.SetPosition (1, Vector3.zero);
 		} 
 	}
 
@@ -257,21 +253,18 @@ public class HookScript : MonoBehaviour {
 	}
 
 	IEnumerator HookMovement(){
+
 		//Excutes a loop until hook as reached its target
-
-		Debug.Log ("Extending initially set to true");
 		while (true) {
-//			Debug.Log ((Vector3.Distance (this.transform.position, destination) <= 0.05f));
-//			Debug.Log (Vector3.Distance (this.transform.position, destination));
-//			Debug.Log ("Within Coroutine");
 
+			//Make sure hook is not hooked on object and an instance of hookShot exists
 			if (hooked || hookShot == null) {
 				yield break;
 			}
 			//Checks the distance between hook and destionation
 			if (Vector3.Distance (hookShot.transform.position, hookDestination) <= 0.01f){
 				
-				Debug.Log ("Distance between this and destination is less than 0.01f: " + hookDestination);
+//				Debug.Log ("Distance between this and destination is less than 0.01f: " + hookDestination);
 
 				//If the hook is currently retracting, check if there is another node in the sequence to go to
 				if (retracting) {
@@ -295,6 +288,8 @@ public class HookScript : MonoBehaviour {
  						
 						//Destroy instance of hookshot
 						Destroy (hookShot);
+						lineRenderer.SetPosition (0, Vector3.zero);
+						lineRenderer.SetPosition (1, Vector3.zero);
 						yield break;
 					}
 
@@ -314,8 +309,6 @@ public class HookScript : MonoBehaviour {
 			} else {
 
 //				Debug.Log ("In else statement of coroutine");
-//				Debug.Log (Vector3.Distance (hookShot.transform.position, hookDestination));
-
 
 				//If retracting, update position of last node and set current hook speed to retract speed
 				if (retracting) {

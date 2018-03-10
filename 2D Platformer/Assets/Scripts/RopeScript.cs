@@ -28,6 +28,8 @@ public class RopeScript : MonoBehaviour {
 			
 //			Debug.Log ("COLLIDED");
 
+			this.gameObject.GetComponent<Rigidbody> ().isKinematic = true;
+
 			//Tell the hookscript that the hook has collided
 			player.GetComponent<HookScript> ().hooked = true;
 			player.GetComponent<HookScript> ().extending = false;
