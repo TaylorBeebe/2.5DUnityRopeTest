@@ -6,27 +6,22 @@ public class HookScript : MonoBehaviour {
 
 
 
-	//Max length hook can travel
-	public float maxRopeLength = 30f;
-
-
-
-	//Stores destination of hook
-	private Vector3 hookDestination;
-
-
-
 	//List contating all the nodes in the rope
 	private Stack<GameObject> nodes = new Stack<GameObject> ();
+
+
 
 	//stores current speed of hook
 	private float curHookSpeed;
 
 	//Speed the hook retracts
-	public float retractSpeed = 100f;
+	public float retractSpeed = 75f;
 
 	//Speed the hook extends
-	public float extendSpeed = 35f;
+	public float extendSpeed = 50f;
+
+	//Max length hook can travel
+	public float maxRopeLength = 30f;
 
 
 
@@ -34,7 +29,7 @@ public class HookScript : MonoBehaviour {
 	public bool extending;
 
 	//Boolean holds if the hook is currently retracting
-	public bool retracting = false;
+	private bool retracting = false;
 
 	//True if hook is currently deployed
 	private bool hookExtended = false;
@@ -80,6 +75,8 @@ public class HookScript : MonoBehaviour {
 	//Direction hook will be fired
 	private Vector3 shootDirection;
 
+	//Stores destination of hook
+	private Vector3 hookDestination;
 
 
 	//Renders line when player is holding down hook fire button
@@ -98,27 +95,31 @@ public class HookScript : MonoBehaviour {
 	// Initialize Line, Animator
 	void Start () {
 		
+		//Grab animator component
 		animator = this.GetComponent<Animator> ();
 
+		//Renders rope and firing lines
 		lineRenderer = this.GetComponent<LineRenderer> ();
-		//rb = this.GetComponent<Rigidbody> ();
 
 		//Push the origin of hook onto stack
 		nodes.Push (hookOrigin);
 
+		//Set extending to be false initially
 		extending = false;
 
 	}
 
 	void Update (){
-		
+
+		//Calculates position of the mouse in worldspace
 		shootDirection = Input.mousePosition;
 		shootDirection.z = 5f; // Camera is at z = -5
 		shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
 
+		//Sets the hookOrigin to look at the worldspace mouse position
 		hookOrigin.transform.LookAt (shootDirection);
 
-		//reticuleTestCube.transform.position = shootDirection;
+//		reticuleTestCube.transform.position = shootDirection;
 
 		//If player hitting hook fire button, set firing to true so destination line can be rendered
 		if (Input.GetButtonDown ("Fire1") && !hookExtended) {
@@ -130,6 +131,7 @@ public class HookScript : MonoBehaviour {
 			
 //			Debug.Log ("Setting retracting to true");
 
+			//Set hooked and extending to false so coroutine moves hook toward correct target
 			hooked = false;
 			extending = false;
 			retracting = true;
@@ -139,20 +141,26 @@ public class HookScript : MonoBehaviour {
 
 		} 
 
+		//Used to propel player toward the hook
 		else if (Input.GetKeyDown("e") && hooked) {
 		}
-			
+
+		//Fire the hook if firing and !hookextended are true to avoid being able to fire nonstop
 		if (Input.GetButtonUp ("Fire1") && !hookExtended && firing) {
+			
 			//Stop the firing loop from running
 			firing = false;
+
 			//Reset Vertices in Line Renderer
 			lineRenderer.SetPosition (0, Vector3.zero);
 			lineRenderer.SetPosition (1, Vector3.zero);
 
+			//Set extended to true for other method dependencies
 			hookExtended = true;
 
-			hookShot = hook;
-
+			//Set hookShot to be an instance of the hook prefab
+			//hookShot = hook;
+			Debug.Log("Invoking waittoshoot. Extending: " + extending);
 			//Instantiate hook shot after arm has time to move
 			Invoke("WaitToShoot", 0.1f);
 		}
@@ -193,8 +201,11 @@ public class HookScript : MonoBehaviour {
 			//Set the vertices of Line Renderer to display where the hook will land
 			lineRenderer.SetPosition (0, hookOrigin.transform.position);
 			lineRenderer.SetPosition (1, hookDestination);
-		} else if (extending || retracting || hooked) {
+		} else if ((extending || retracting || hooked) && hookShot != null) {
 			
+			Debug.Log("hooked: " + hooked);
+			Debug.Log("extending: " + extending);
+			Debug.Log("retracting: " + retracting);
 
 			lineRenderer.material = lineRendererRopeColor;
 
@@ -272,44 +283,54 @@ public class HookScript : MonoBehaviour {
 						nodes.Pop ();
 						hookDestination = nodes.Peek ().transform.position;
 					} else {
+
+						//Set retracting and hookExtended to false
 						retracting = false;
 						hookExtended = false;
-//						lineRenderer.SetPosition (0, Vector3.zero);
-//						lineRenderer.SetPosition (1, Vector3.zero);
- 						Destroy (hookShot);
+
+
+						//Setting extending to false is a quick-fix to avoid bug where extending is
+						//not set to false before getting to this point. TODO: Identify issue in logic!!!
+						extending = false;
+ 						
+						//Destroy instance of hookshot
+						Destroy (hookShot);
 						yield break;
 					}
 
-					//If not retracting, this must be the final destination
+				//If hook has not latched, begin to retract
 				} else if (!hooked) {
 
 //					Debug.Log ("Reached limit and not hooked. Retracting");
 
 					extending = false;
 					retracting = true;
+					//Disable collider to avoid hooking on the way back
 					hookShot.GetComponent<Collider> ().enabled = false;
+
+					//new hook destionation is last node in rope
 					hookDestination = nodes.Peek ().transform.position;
-					yield return null;
 				}
 			} else {
 
 //				Debug.Log ("In else statement of coroutine");
 //				Debug.Log (Vector3.Distance (hookShot.transform.position, hookDestination));
 
+
+				//If retracting, update position of last node and set current hook speed to retract speed
 				if (retracting) {
 					Debug.Log ("Retracting = true");
 					curHookSpeed = retractSpeed;
 					hookDestination = nodes.Peek ().transform.position;
 
+				//If not retracting, must be extending. Set hook speed to extend speed
 				} else{
 					curHookSpeed = extendSpeed;
 				}
-				hookShot.transform.position = Vector3.MoveTowards (hookShot.transform.position, hookDestination, extendSpeed * Time.deltaTime);
-
-//				Debug.Log ("Yielding return null");
-
-				yield return null;
 			}
+			//Update hooks positon and return to top of coroutine
+			hookShot.transform.position = Vector3.MoveTowards (hookShot.transform.position, hookDestination, curHookSpeed * Time.deltaTime);
+			yield return null;
 		}
 
 	}

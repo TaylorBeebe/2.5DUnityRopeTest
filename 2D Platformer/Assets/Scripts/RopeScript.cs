@@ -14,14 +14,21 @@ public class RopeScript : MonoBehaviour {
 
 	}
 
+	//Detects if hook has collided
 	void OnCollisionEnter(Collision col){
-		Debug.Log ("On collision enter");
-		Debug.Log (col.gameObject.tag);
+
+
+//		Debug.Log ("On collision enter");
+//		Debug.Log (col.gameObject.tag);
+
+		//If hook has collided with the player or the origin cube, ignore the collision
 		if (col.gameObject.tag == "Player" || col.gameObject.tag == "HookOrigin") {
 			Physics.IgnoreCollision (col.collider, this.GetComponent<Collider> ());
 		} else {
-			Debug.Log ("COLLIDED");
+			
+//			Debug.Log ("COLLIDED");
 
+			//Tell the hookscript that the hook has collided
 			player.GetComponent<HookScript> ().hooked = true;
 			player.GetComponent<HookScript> ().extending = false;
 		}
