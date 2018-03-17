@@ -7,7 +7,7 @@ public class HookScript : MonoBehaviour {
 
 
 	//List contating all the nodes in the rope
-	private Stack<GameObject> nodes = new Stack<GameObject> ();
+	private LinkedList<GameObject> nodes = new LinkedList<GameObject> ();
 
 
 
@@ -62,6 +62,8 @@ public class HookScript : MonoBehaviour {
 	//Cube that follows mouse to test for mouse location on screen
 	public GameObject reticuleTestCube;
 
+	private GameObject nodeFromList;
+
 
 
 	//Color of linerenderer when aiming hook
@@ -77,6 +79,7 @@ public class HookScript : MonoBehaviour {
 
 	//Stores destination of hook
 	private Vector3 hookDestination;
+
 
 
 	//Renders line when player is holding down hook fire button
@@ -102,7 +105,7 @@ public class HookScript : MonoBehaviour {
 		lineRenderer = this.GetComponent<LineRenderer> ();
 
 		//Push the origin of hook onto stack
-		nodes.Push (hookOrigin);
+		nodes.AddFirst (hookOrigin);
 
 		//Set extending to be false initially
 		extending = false;
@@ -173,7 +176,7 @@ public class HookScript : MonoBehaviour {
 
 				extending = false;
 				retracting = true;
-				hookDestination = nodes.Peek ().transform.position;
+				hookDestination = nodes.Last.Value.transform.position;
 
 				hookShot.GetComponent<Collider> ().enabled = false;
 
@@ -220,11 +223,23 @@ public class HookScript : MonoBehaviour {
 
 	//Directs the animator to move left arm toward the hook
 	void OnAnimatorIK(){
+
+//		Vector3 ikGoal = Vector3.zero;
+//		bool animate = false;
+//		if (firing) {
+//			ikGoal = shootDirection;
+//			animate = true;
+//		} else if (hookExtended || extending ||) {
+//			ikGoal = nodes.Last.transform.position;
+//			animate = true;
+//		}
+//		if (animate) {
 			animator.SetLookAtWeight (0.4f);
 			animator.SetLookAtPosition (shootDirection);
 			animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 0.8f);
 			animator.SetIKPosition (AvatarIKGoal.LeftHand, shootDirection);
-		}
+//		}
+	}
 
 	void WaitToShoot(){
 		
@@ -273,8 +288,8 @@ public class HookScript : MonoBehaviour {
 
 					curHookSpeed = retractSpeed;
 					if (nodes.Count > 1) {
-						nodes.Pop ();
-						hookDestination = nodes.Peek ().transform.position;
+						nodes.RemoveLast ();
+						hookDestination = nodes.Last.Value.transform.position;
 					} else {
 
 						//Set retracting and hookExtended to false
@@ -304,7 +319,7 @@ public class HookScript : MonoBehaviour {
 					hookShot.GetComponent<Collider> ().enabled = false;
 
 					//new hook destionation is last node in rope
-					hookDestination = nodes.Peek ().transform.position;
+					hookDestination = nodes.Last.Value.transform.position;
 				}
 			} else {
 
@@ -314,7 +329,7 @@ public class HookScript : MonoBehaviour {
 				if (retracting) {
 					Debug.Log ("Retracting = true");
 					curHookSpeed = retractSpeed;
-					hookDestination = nodes.Peek ().transform.position;
+					hookDestination = nodes.Last.Value.transform.position;
 
 				//If not retracting, must be extending. Set hook speed to extend speed
 				} else{
