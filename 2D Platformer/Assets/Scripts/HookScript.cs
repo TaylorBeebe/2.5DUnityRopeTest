@@ -7,7 +7,7 @@ public class HookScript : MonoBehaviour {
 
 
 	//List contating all the nodes in the rope
-	private LinkedList<GameObject> nodes = new LinkedList<GameObject> ();
+	private List<GameObject> nodes = new List<GameObject> ();
 
 
 
@@ -22,6 +22,8 @@ public class HookScript : MonoBehaviour {
 
 	//Max length hook can travel
 	public float maxRopeLength = 30f;
+
+	public float nodeOffset = 0.01f;
 
 
 
@@ -50,6 +52,8 @@ public class HookScript : MonoBehaviour {
 	//Last node in the rope (Nodes are set when player is out of sight of hook)
 	private GameObject lastNode;
 
+	private GameObject newNode;
+
 	//cube located on player hook arm
 	public GameObject hookOrigin;
 
@@ -59,10 +63,11 @@ public class HookScript : MonoBehaviour {
 	//Instance of hook
 	public GameObject hookShot;
 
+	//Rope node instantiated if player and hook are not in LOS
+	public GameObject ropeNode;
+
 	//Cube that follows mouse to test for mouse location on screen
 	public GameObject reticuleTestCube;
-
-	private GameObject nodeFromList;
 
 
 
@@ -105,7 +110,7 @@ public class HookScript : MonoBehaviour {
 		lineRenderer = this.GetComponent<LineRenderer> ();
 
 		//Push the origin of hook onto stack
-		nodes.AddFirst (hookOrigin);
+		nodes.Add (hookOrigin);
 
 		//Set extending to be false initially
 		extending = false;
@@ -168,21 +173,39 @@ public class HookScript : MonoBehaviour {
 		}
 
 		//Check if rope was interfered with during deployment, destroy if reached origin 
-		if (extending) {
+		if (hookExtended) {
 			
-			if (Physics.Linecast (hookShot.transform.position, hookOrigin.transform.position)) {
+			if (Physics.Linecast (lastNode.transform.position, hookOrigin.transform.position, out hit)) {
+//				Debug.Log (lastNode.transform.position);
+				if (extending) {
+					Debug.Log ("Extension interupted!");
 
-				Debug.Log ("Extension interupted!");
+					extending = false;
+					retracting = true;
+					hookDestination = nodes [nodes.Count - 1].transform.position;
+//					hookDestination = nodes.Last.Value.transform.position;
 
-				extending = false;
-				retracting = true;
-				hookDestination = nodes.Last.Value.transform.position;
+					hookShot.GetComponent<Collider> ().enabled = false;
+					StopCoroutine ("HookMovement");
+					StartCoroutine ("HookMovement");
+				} else if (hooked) {
+//					Debug.Log ("instantiating rope node");
+//					Debug.Log (hit.normal);
+					newNode = (GameObject) Instantiate (ropeNode, hit.point + (hit.normal * nodeOffset), Quaternion.identity);
 
-				hookShot.GetComponent<Collider> ().enabled = false;
+					int index = nodes.IndexOf (lastNode);
 
-				StopCoroutine ("HookMovement");
-				StartCoroutine ("HookMovement");
+					if (index != -1) {
+						nodes.Insert (index, newNode);
+					} else {
+						nodes.Add (newNode);
+					}
 
+					//nodes.Insert (nodes.IndexOf (lastNode), newNode);
+					Debug.Log ("About to update lastNode. Cur pos is: " + lastNode.transform.position);
+					lastNode = newNode;
+					Debug.Log ("Updated lastNode. Cur Pos is: " + lastNode.transform.position);
+				}
 			}
 		} 
 	}
@@ -210,9 +233,16 @@ public class HookScript : MonoBehaviour {
 //			Debug.Log("retracting: " + retracting);
 
 			lineRenderer.material = lineRendererRopeColor;
+			if (lineRenderer.positionCount < nodes.Count + 1) {
+				lineRenderer.positionCount = nodes.Count + 1;
+			}
+			int x = 0;
+			foreach (GameObject node in nodes) {
+				lineRenderer.SetPosition (x, node.transform.position);
+				x++;
+			}
+			lineRenderer.SetPosition(x, hookShot.transform.position);
 
-			lineRenderer.SetPosition (0, hookOrigin.transform.position);
-			lineRenderer.SetPosition (1, hookShot.transform.position);
 
 		} 
 	}
@@ -247,7 +277,7 @@ public class HookScript : MonoBehaviour {
 
 		Vector3 hookSpawn = hookOrigin.transform.position + hookOrigin.transform.forward * 0.09f;
 
-		//Debug.DrawRay (hookSpawn, hookOrigin.transform.forward * maxRopeLength, Color.green, 2f);
+//		Debug.DrawRay (hookSpawn, hookOrigin.transform.forward * maxRopeLength, Color.green, 2f);
 
 		//Calculate where hook will hit
 		if (Physics.Raycast (hookSpawn, hookOrigin.transform.forward * maxRopeLength, out hit, maxRopeLength)) {
@@ -261,6 +291,7 @@ public class HookScript : MonoBehaviour {
 //		Debug.Log ("Destination at instantiation: " + hookDestination);
 
 		hookShot = (GameObject) Instantiate (hook, hookSpawn, hookOrigin.transform.rotation);
+		lastNode = hookShot;
 		extending = true;
 		StartCoroutine ("HookMovement");
 
@@ -288,8 +319,13 @@ public class HookScript : MonoBehaviour {
 
 					curHookSpeed = retractSpeed;
 					if (nodes.Count > 1) {
-						nodes.RemoveLast ();
-						hookDestination = nodes.Last.Value.transform.position;
+						
+						nodes.RemoveAt (nodes.Count - 1);
+						Destroy (lastNode);
+						lastNode = nodes [nodes.Count - 1];
+						hookDestination = lastNode.transform.position;
+//						nodes.RemoveLast ();
+//						hookDestination = nodes.Last.Value.transform.position;
 					} else {
 
 						//Set retracting and hookExtended to false
@@ -303,6 +339,7 @@ public class HookScript : MonoBehaviour {
  						
 						//Destroy instance of hookshot
 						Destroy (hookShot);
+						lastNode = null;
 						lineRenderer.SetPosition (0, Vector3.zero);
 						lineRenderer.SetPosition (1, Vector3.zero);
 						yield break;
@@ -319,7 +356,8 @@ public class HookScript : MonoBehaviour {
 					hookShot.GetComponent<Collider> ().enabled = false;
 
 					//new hook destionation is last node in rope
-					hookDestination = nodes.Last.Value.transform.position;
+					hookDestination =  nodes [nodes.Count - 1].transform.position;
+//					hookDestination = nodes.Last.Value.transform.position;
 				}
 			} else {
 
@@ -327,9 +365,10 @@ public class HookScript : MonoBehaviour {
 
 				//If retracting, update position of last node and set current hook speed to retract speed
 				if (retracting) {
-					Debug.Log ("Retracting = true");
+//					Debug.Log ("Retracting = true");
 					curHookSpeed = retractSpeed;
-					hookDestination = nodes.Last.Value.transform.position;
+					hookDestination = nodes [nodes.Count - 1].transform.position;
+//					hookDestination = nodes.Last.Value.transform.position;
 
 				//If not retracting, must be extending. Set hook speed to extend speed
 				} else{
