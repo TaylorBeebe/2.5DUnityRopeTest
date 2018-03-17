@@ -169,32 +169,13 @@ public class HookScript : MonoBehaviour {
 			if (Physics.Linecast (lastNode.transform.position, hookOrigin.transform.position, out hit)) {
 //				Debug.Log (lastNode.transform.position);
 				if (extending) {
-					Debug.Log ("Extension interupted!");
 
 					beginHookRetraction ();
 
 				} else if (hooked) {
-//					Debug.Log ("instantiating rope node");
-//					Debug.Log (hit.normal);
-					newNode = (GameObject) Instantiate (ropeNode, hit.point + (hit.normal * nodeOffset), Quaternion.identity);
 
-					int index = nodes.IndexOf (lastNode);
+					spawnNode (hit);
 
-					if (index != -1) {
-						nodes.Insert (index, newNode);
-					} else {
-						nodes.Add (newNode);
-					}
-
-					if(nodes.Count > 3 && !Physics.Linecast(nodes[index + 2].transform.position, newNode.transform.position)){
-						nodes.RemoveAt (index + 1);
-						Destroy (lastNode);
-					}
-
-					//nodes.Insert (nodes.IndexOf (lastNode), newNode);
-//					Debug.Log ("About to update lastNode. Cur pos is: " + lastNode.transform.position);
-					lastNode = newNode;
-//					Debug.Log ("Updated lastNode. Cur Pos is: " + lastNode.transform.position);
 				}
 			}
 		} 
@@ -231,7 +212,6 @@ public class HookScript : MonoBehaviour {
 			}
 			int x = 0;
 			foreach (GameObject node in nodes) {
-				Debug.Log (node);
 				lineRenderer.SetPosition (x, node.transform.position);
 				x++;
 			}
@@ -247,21 +227,46 @@ public class HookScript : MonoBehaviour {
 	//Directs the animator to move left arm toward the hook
 	void OnAnimatorIK(){
 
-//		Vector3 ikGoal = Vector3.zero;
-//		bool animate = false;
-//		if (firing) {
-//			ikGoal = shootDirection;
-//			animate = true;
-//		} else if (hookExtended || extending ||) {
-//			ikGoal = nodes.Last.transform.position;
-//			animate = true;
-//		}
-//		if (animate) {
+		Vector3 ikGoal = Vector3.zero;
+		bool animate = false;
+		if (firing) {
+			ikGoal = shootDirection;
+			animate = true;
+		} else if (extending || retracting || hooked) {
+			if (nodes.Count > 2) {
+				ikGoal = nodes [nodes.Count - 1].transform.position;
+			} else {
+				ikGoal = nodes [nodes.Count - 1].transform.position;
+			}
+			animate = true;
+		}
+		if (animate) {
 			animator.SetLookAtWeight (0.4f);
-			animator.SetLookAtPosition (shootDirection);
+			animator.SetLookAtPosition (ikGoal);
 			animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, 0.8f);
-			animator.SetIKPosition (AvatarIKGoal.LeftHand, shootDirection);
-//		}
+			animator.SetIKPosition (AvatarIKGoal.LeftHand, ikGoal);
+		}
+	}
+
+	void spawnNode(RaycastHit nodeHit){
+		Debug.Log ("Creating new node");
+		newNode = (GameObject) Instantiate (ropeNode, hit.point + (hit.normal * nodeOffset), Quaternion.identity);
+
+		int index = nodes.IndexOf (lastNode);
+
+		if (index != -1) {
+			nodes.Insert (index, newNode);
+		} else {
+			nodes.Add (newNode);
+		}
+
+		if(nodes.Count > 3 && !Physics.Linecast(nodes[index + 2].transform.position, newNode.transform.position)){
+			Debug.Log ("Destroying Unnecessary Node");
+			nodes.RemoveAt (index + 1);
+			Destroy (lastNode);
+		}
+
+		lastNode = newNode;
 	}
 
 	void beginHookRetraction(){
