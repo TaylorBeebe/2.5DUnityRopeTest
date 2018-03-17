@@ -143,15 +143,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ee5ed2439550844990d32691c124640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRopeLength: 20
   retractSpeed: 100
   extendSpeed: 35
+  maxRopeLength: 20
+  nodeOffset: 0.01
   extending: 1
-  retracting: 0
   hooked: 0
   hookOrigin: {fileID: 1038864885}
   hook: {fileID: 1876003219928328, guid: ebf7160d151dd3644bad60aa9da21452, type: 2}
   hookShot: {fileID: 0}
+  ropeNode: {fileID: 1996132958530064, guid: 0535e810ec20f5f40a7b8d493e144220, type: 2}
   reticuleTestCube: {fileID: 207702420}
   lineRendererFiringColor: {fileID: 2100000, guid: f96d4cd6c86849741940e34119a87df8,
     type: 2}
