@@ -23,7 +23,8 @@ public class HookScript : MonoBehaviour {
 	//Max length hook can travel
 	public float maxRopeLength = 30f;
 
-	public float nodeOffset = 0.01f;
+	//Constant used when creating an offset for nodes in the rope
+	public float nodeOffset = 0.05f;
 
 
 
@@ -58,6 +59,8 @@ public class HookScript : MonoBehaviour {
 	private GameObject lastNode;
 
 	private GameObject newNode;
+
+	private GameObject tempNode;
 
 	//cube located on player hook arm
 	public GameObject hookOrigin;
@@ -128,7 +131,7 @@ public class HookScript : MonoBehaviour {
 		//Calculates position of the mouse in worldspace
 		shootDirection = Input.mousePosition;
 		shootDirection.z = 5f; // Camera is at z = -5
-		shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
+		shootDirection = Camera.main.ScreenToWorldPoint (shootDirection);
 
 		//Sets the hookOrigin to look at the worldspace mouse position
 		hookOrigin.transform.LookAt (shootDirection);
@@ -143,12 +146,12 @@ public class HookScript : MonoBehaviour {
 		//If player clicks while hook is deployed, retract hook
 		else if (Input.GetButtonDown ("Fire1") && (hookExtended || hooked)) {
 
-			beginHookRetraction();
+			beginHookRetraction ();
 
 		} 
 
 		//Used to propel player toward the hook
-		else if (Input.GetKeyDown("e") && hooked) {
+		else if (Input.GetKeyDown ("e") && hooked) {
 		}
 
 		//Fire the hook if firing and !hookextended are true to avoid being able to fire nonstop
@@ -166,7 +169,7 @@ public class HookScript : MonoBehaviour {
 
 			//Instantiate hook shot after arm has time to move
 //			Invoke("WaitToShoot", 0.1f);
-			WaitToShoot();
+			WaitToShoot ();
 		}
 
 		//Check if rope was interfered with during deployment, destroy if reached origin 
@@ -183,8 +186,18 @@ public class HookScript : MonoBehaviour {
 					spawnNode (hit);
 
 				}
+			} else if (nodes.Count > 2 && !Physics.Linecast (nodes [2].transform.position, hookOrigin.transform.position)) {
+
+				if (nodes.Count > 3 || (nodes.Count == 3 && checkNodeAngle ())) {
+					Debug.Log ("Destroying Unnecessary Node");
+					tempNode = nodes [1];
+					nodes.RemoveAt (1);
+					Destroy (tempNode);
+					lastNode = nodes [1];
+
+				}	
 			}
-		} 
+		}
 	}
 
 	void LateUpdate(){
@@ -314,6 +327,15 @@ public class HookScript : MonoBehaviour {
 		lineRenderer.positionCount = count;
 	}
 
+	//If there are 3 nodes in the rope (origin, intermediate node, hook node) then this check the angle between them
+	//To see if the intermediate node is necessary
+	bool checkNodeAngle(){
+		float angle = Vector2.Angle (nodes [2].transform.position - nodes [1].transform.position, nodes [0].transform.position - nodes [1].transform.position);
+		Debug.Log (angle);
+		return Mathf.Abs (180 - angle) < 5f;
+
+	}
+
 	//Instantiates the hook
 	void WaitToShoot(){
 		
@@ -375,7 +397,6 @@ public class HookScript : MonoBehaviour {
 						//Set retracting and hookExtended to false
 						retracting = false;
 						hookExtended = false;
-
 
 						//Setting extending to false is a quick-fix to avoid bug where extending is
 						//not set to false before getting to this point. TODO: Identify issue in logic!!!
