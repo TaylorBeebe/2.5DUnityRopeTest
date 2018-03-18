@@ -10,10 +10,6 @@ public class HookScript : MonoBehaviour {
 	private List<GameObject> nodes = new List<GameObject> ();
 
 
-
-	//stores current speed of hook
-	private float curHookSpeed;
-
 	//Speed the hook retracts
 	public float retractSpeed = 75f;
 
@@ -27,9 +23,6 @@ public class HookScript : MonoBehaviour {
 	public float nodeOffset = 0.05f;
 
 
-
-	//Layermask for getting node offset from surfaces
-	private int nodeLayerMask = 1 << 10;
 
 
 
@@ -68,9 +61,6 @@ public class HookScript : MonoBehaviour {
 	//Hook prefab
 	public GameObject hook;
 
-	//Instance of hook
-	public GameObject hookShot;
-
 	//Rope node instantiated if player and hook are not in LOS
 	public GameObject ropeNode;
 
@@ -92,6 +82,25 @@ public class HookScript : MonoBehaviour {
 
 	//Stores destination of hook
 	private Vector3 hookDestination;
+
+
+
+	//Used when testing angle between nodes
+	private float angle;
+
+	//stores current speed of hook
+	private float curHookSpeed;
+
+
+
+	//Layermask for getting node offset from surfaces
+	private int nodeLayerMask = 1 << 10;
+
+	private int interferenceMask = ~(1 << 8);
+
+
+	//Instance of hook
+	private GameObject hookShot;
 
 
 
@@ -156,7 +165,7 @@ public class HookScript : MonoBehaviour {
 
 		//Fire the hook if firing and !hookextended are true to avoid being able to fire nonstop
 		if (Input.GetButtonUp ("Fire1") && !hookExtended && firing) {
-			
+			Debug.Log ("Firing");
 			//Stop the firing loop from running
 			firing = false;
 
@@ -175,7 +184,7 @@ public class HookScript : MonoBehaviour {
 		//Check if rope was interfered with during deployment, destroy if reached origin 
 		if (hookExtended) {
 			
-			if (Physics.Linecast (lastNode.transform.position, hookOrigin.transform.position, out hit)) {
+			if (Physics.Linecast (hookOrigin.transform.position, lastNode.transform.position, out hit, interferenceMask)) {
 //				Debug.Log (lastNode.transform.position);
 				if (extending) {
 
@@ -291,10 +300,10 @@ public class HookScript : MonoBehaviour {
 		if (index != -1) {
 			nodes.Insert (index, newNode);
 		}
-
+			
 		//Check if the node after this node in the chain is necessary. Delete it if not
 		if(nodes.Count > 3 && !Physics.Linecast(nodes[index + 2].transform.position, newNode.transform.position)){
-			Debug.Log ("Destroying Unnecessary Node");
+//			Debug.Log ("Destroying Unnecessary Node");
 			nodes.RemoveAt (index + 1);
 			Destroy (lastNode);
 		}
@@ -330,8 +339,10 @@ public class HookScript : MonoBehaviour {
 	//If there are 3 nodes in the rope (origin, intermediate node, hook node) then this check the angle between them
 	//To see if the intermediate node is necessary
 	bool checkNodeAngle(){
+
 		float angle = Vector2.Angle (nodes [2].transform.position - nodes [1].transform.position, nodes [0].transform.position - nodes [1].transform.position);
-		Debug.Log (angle);
+//		Debug.Log (angle);
+
 		return Mathf.Abs (180 - angle) < 5f;
 
 	}
