@@ -16,7 +16,7 @@ TagManager:
   - 
   - InterferenceRaycast
   - IgnoreHook
-  - 
+  - NodeOffsetRaycast
   - 
   - 
   - 

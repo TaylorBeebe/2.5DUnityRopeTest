@@ -27,6 +27,11 @@ public class HookScript : MonoBehaviour {
 
 
 
+	//Layermask for getting node offset from surfaces
+	private int nodeLayerMask = 1 << 10;
+
+
+
 	//Boolean holds if the hook has hit an object or has been interupted
 	public bool extending;
 
@@ -95,8 +100,9 @@ public class HookScript : MonoBehaviour {
 	//Ray used to make sure nothing has come between hook and origin
 	private Ray ray;
 
-	//Raycast for finding destination of hook
+	//For linecasts
 	private RaycastHit hit;
+	private RaycastHit hit2;
 
 
 
@@ -233,11 +239,7 @@ public class HookScript : MonoBehaviour {
 			ikGoal = shootDirection;
 			animate = true;
 		} else if (extending || retracting || hooked) {
-			if (nodes.Count > 2) {
-				ikGoal = nodes [nodes.Count - 1].transform.position;
-			} else {
-				ikGoal = nodes [nodes.Count - 1].transform.position;
-			}
+			ikGoal = nodes [1].transform.position;
 			animate = true;
 		}
 		if (animate) {
@@ -248,27 +250,47 @@ public class HookScript : MonoBehaviour {
 		}
 	}
 
+	//Creates nodes in the rope. Called whenever interference is detected
 	void spawnNode(RaycastHit nodeHit){
-		Debug.Log ("Creating new node");
-		newNode = (GameObject) Instantiate (ropeNode, hit.point + (hit.normal * nodeOffset), Quaternion.identity);
+//		Debug.Log ("Creating new node");
 
+		//Shoots a ray toward the center of the platform where a cylinder sits. Gets the normal vector at the point
+		//the ray hits the cylinder. This allows for a perfect offset so the rope can wrap around objects
+		Physics.Linecast (nodeHit.point, nodeHit.transform.GetChild(0).position, out hit2, nodeLayerMask);
+
+		Debug.DrawRay (nodeHit.point, nodeHit.transform.GetChild (0).position - nodeHit.point, Color.red, 5);
+
+//		Debug.Log ("Hit2.point is: " + hit2.point);
+//
+//		Debug.Log ("Hit2.normal is: " + hit2.normal);
+
+		//Instantiate the rope at the interference point in the first argument with the offset from the normal vector multiplied
+		//by some constant
+		newNode = (GameObject) Instantiate (ropeNode, nodeHit.point + hit2.normal * nodeOffset, Quaternion.identity);
+
+		//newNode = (GameObject) Instantiate (ropeNode, nodeHit.point + Vector3.Normalize(nodeHit.point - nodeHit.transform.GetChild(0).position) * nodeOffset, Quaternion.identity);
+
+		//Gets the index where the node should be inserted into the list
 		int index = nodes.IndexOf (lastNode);
+
+		//if the index was found, insert at that index
 
 		if (index != -1) {
 			nodes.Insert (index, newNode);
-		} else {
-			nodes.Add (newNode);
 		}
 
+		//Check if the node after this node in the chain is necessary. Delete it if not
 		if(nodes.Count > 3 && !Physics.Linecast(nodes[index + 2].transform.position, newNode.transform.position)){
 			Debug.Log ("Destroying Unnecessary Node");
 			nodes.RemoveAt (index + 1);
 			Destroy (lastNode);
 		}
 
+		//Set last node to the node just created
 		lastNode = newNode;
 	}
 
+	//Sets all the bools to the correct setting, disables collider, and sets the last node to be the node before the hook
 	void beginHookRetraction(){
 		StopCoroutine ("HookMovement");
 		extending = false;
@@ -282,14 +304,17 @@ public class HookScript : MonoBehaviour {
 		StartCoroutine ("HookMovement");
 	}
 
+	//checks if the current vector position count in the line renderer matches the required amount
 	bool checkLineRendererPositionCount(int count){
 		return lineRenderer.positionCount == count;
 	}
 
+	//sets the vector count in line renderer to be the first argument. Also used to clear the line renderer
 	void setLineRendererPositionCount(int count){
 		lineRenderer.positionCount = count;
 	}
 
+	//Instantiates the hook
 	void WaitToShoot(){
 		
 		hookOrigin.transform.LookAt (shootDirection, Vector3.forward);
@@ -318,6 +343,7 @@ public class HookScript : MonoBehaviour {
 		//hookShot.GetComponent<RopeScript> ().destination = hookDestination;
 	}
 
+	//Controls the movement of the hook
 	IEnumerator HookMovement(){
 
 		//Excutes a loop until hook as reached its target
